@@ -9,6 +9,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(220, 238, 219, 1),
+        foregroundColor: Color.fromARGB(255, 65, 35, 52),
       ),
 
       backgroundColor: const Color.fromRGBO(220, 238, 219, 1),
