@@ -40,7 +40,7 @@ class TrackPerformancePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(77, 1, 32, 12),
+                      color: const Color.fromARGB(77, 4, 55, 23),
                       spreadRadius: 2,
                       blurRadius: 9,
                       offset: Offset(2, 4),
@@ -89,14 +89,17 @@ class TrackPerformancePage extends StatelessWidget {
                 ),
               ),
 
-              //arrow icon
+              //arrow icon button
               Positioned(
-                top: 145,
-                left: 325,
-                child: Image.asset(
-                  'images/double-arrow-icon.png',
-                  width: 30,
-                  height: 30,
+                top: 135,
+                left: 315,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    'images/double-arrow-icon.png',
+                    width: 30,
+                    height: 30,
+                  ),
                 ),
               ),
             ],
@@ -120,7 +123,7 @@ class TrackPerformancePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(77, 1, 32, 12),
+                      color: const Color.fromARGB(77, 4, 55, 23),
                       spreadRadius: 2,
                       blurRadius: 9,
                       offset: Offset(2, 4),
@@ -169,14 +172,17 @@ class TrackPerformancePage extends StatelessWidget {
                 ),
               ),
 
-              //arrow icon
+              //arrow icon button
               Positioned(
-                top: 125,
-                left: 325,
-                child: Image.asset(
-                  'images/double-arrow-icon.png',
-                  width: 30,
-                  height: 30,
+                top: 115,
+                left: 315,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    'images/double-arrow-icon.png',
+                    width: 30,
+                    height: 30,
+                  ),
                 ),
               ),
             ],
@@ -195,7 +201,7 @@ class TrackPerformancePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(77, 1, 32, 12),
+                      color: const Color.fromARGB(77, 4, 55, 23),
                       spreadRadius: 2,
                       blurRadius: 9,
                       offset: Offset(2, 4),
@@ -244,14 +250,17 @@ class TrackPerformancePage extends StatelessWidget {
                 ),
               ),
 
-              //arrow icon
+              //arrow icon button
               Positioned(
-                top: 125,
-                left: 325,
-                child: Image.asset(
-                  'images/double-arrow-icon.png',
-                  width: 30,
-                  height: 30,
+                top: 115,
+                left: 315,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    'images/double-arrow-icon.png',
+                    width: 30,
+                    height: 30,
+                  ),
                 ),
               ),
             ],

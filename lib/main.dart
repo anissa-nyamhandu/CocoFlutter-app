@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       // theme: ThemeData(
       //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       // ),
-      home: LearningPage(),
+      home: TrackPerformancePage(),
       routes: {
         '/homepage': (context) => HomePage(),
         '/learningpage': (context) => LearningPage(),
