@@ -85,6 +85,7 @@ flutter:
     - images/schedule-icon.png
     - images/stats-icon.png
     - images/pink-create-icon.png
+    - images/big-post-1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
