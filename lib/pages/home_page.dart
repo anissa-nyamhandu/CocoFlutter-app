@@ -3,7 +3,7 @@ import 'package:my_app/pages/learning_page.dart';
 import 'package:my_app/pages/track_performance_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
