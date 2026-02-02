@@ -53,6 +53,8 @@ class _HomePageState extends State<HomePage> {
         selectedFontSize: 0,
         unselectedFontSize: 0,
 
+        elevation: 0,
+
         items: [
           BottomNavigationBarItem(
             //icon: Icon(Icons.home),
