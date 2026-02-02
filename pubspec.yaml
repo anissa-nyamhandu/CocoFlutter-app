@@ -86,6 +86,11 @@ flutter:
     - images/stats-icon.png
     - images/pink-create-icon.png
     - images/big-post-1.png
+    - images/clients-icon.png
+    - images/followers-icon.png
+    - images/light-double-arrow-icon.png
+    - images/likes-icon.png
+    - images/new-followers-icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

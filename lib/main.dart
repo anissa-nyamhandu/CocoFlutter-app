@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/best_posts_page.dart';
 import 'package:my_app/pages/followers_clients_stats_page.dart';
 import 'package:my_app/pages/home_page.dart';
 import 'package:my_app/pages/inspire_page.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/postsstatspage': (context) => PostsStatsPage(),
         '/inspirepage': (context) => InspirePage(),
         '/postanalyticspage': (context) => PostAnalysisPage(),
+        '/bestpostspage': (context) => BestPostsPage(),
       },
     );
   }
