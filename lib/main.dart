@@ -7,6 +7,7 @@ import 'package:my_app/pages/learning_page.dart';
 import 'package:my_app/pages/post_analysis_page.dart';
 import 'package:my_app/pages/posts_stats_page.dart';
 import 'package:my_app/pages/track_performance_page.dart';
+import 'package:my_app/pages/create_post_flow.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -32,6 +33,8 @@ class MyApp extends StatelessWidget {
         '/inspirepage': (context) => InspirePage(),
         '/postanalyticspage': (context) => PostAnalysisPage(),
         '/bestpostspage': (context) => BestPostsPage(),
+
+        '/createpost': (context) => const CreatePostFlow(),
       },
     );
   }
