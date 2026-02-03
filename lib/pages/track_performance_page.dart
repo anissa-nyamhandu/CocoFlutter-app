@@ -57,7 +57,7 @@ class TrackPerformancePage extends StatelessWidget {
                   'Followers and\nClients statistics',
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
-                      color: const Color.fromRGBO(220, 238, 219, 1),
+                      color: Color.fromRGBO(220, 238, 219, 1),
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       height: 1.1,
@@ -80,7 +80,7 @@ class TrackPerformancePage extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
-                        color: const Color.fromRGBO(220, 238, 219, 1),
+                        color: Color.fromRGBO(220, 238, 219, 1),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
@@ -142,7 +142,7 @@ class TrackPerformancePage extends StatelessWidget {
                   'Posts\nStatistics',
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
-                      color: const Color.fromRGBO(220, 238, 219, 1),
+                      color: Color.fromRGBO(220, 238, 219, 1),
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       height: 1.1,
@@ -165,7 +165,7 @@ class TrackPerformancePage extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
-                        color: const Color.fromRGBO(220, 238, 219, 1),
+                        color: Color.fromRGBO(220, 238, 219, 1),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
@@ -221,7 +221,7 @@ class TrackPerformancePage extends StatelessWidget {
                   'Inspire yourself\nAnd compare',
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
-                      color: const Color.fromRGBO(220, 238, 219, 1),
+                      color:Color.fromRGBO(220, 238, 219, 1),
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       height: 1.1,
@@ -244,7 +244,7 @@ class TrackPerformancePage extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
-                        color: const Color.fromRGBO(220, 238, 219, 1),
+                        color: Color.fromRGBO(220, 238, 219, 1),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),

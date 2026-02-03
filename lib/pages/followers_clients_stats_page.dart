@@ -81,7 +81,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
                             '1954',
                             style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
-                                color: const Color.fromRGBO(220, 238, 219, 1),
+                                color:Color.fromRGBO(220, 238, 219, 1),
                                 fontSize: 35,
                                 fontWeight: FontWeight.w600,
                                 height: 1.1,
@@ -142,7 +142,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
                             '3560',
                             style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
-                                color: const Color.fromRGBO(220, 238, 219, 1),
+                                color: Color.fromRGBO(220, 238, 219, 1),
                                 fontSize: 35,
                                 fontWeight: FontWeight.w600,
                                 height: 1.1,
@@ -320,7 +320,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
                             '+37',
                             style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
-                                color: const Color.fromRGBO(220, 238, 219, 1),
+                                color: Color.fromRGBO(220, 238, 219, 1),
                                 fontSize: 35,
                                 fontWeight: FontWeight.w600,
                                 height: 1.1,
@@ -365,7 +365,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
                             '+55',
                             style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
-                                color: const Color.fromRGBO(220, 238, 219, 1),
+                                color: Color.fromRGBO(220, 238, 219, 1),
                                 fontSize: 35,
                                 fontWeight: FontWeight.w600,
                                 height: 1.1,
@@ -443,7 +443,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
                             '+245',
                             style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
-                                color: const Color.fromRGBO(220, 238, 219, 1),
+                                color: Color.fromRGBO(220, 238, 219, 1),
                                 fontSize: 35,
                                 fontWeight: FontWeight.w600,
                                 height: 1.1,
@@ -488,7 +488,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
                             '+986',
                             style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
-                                color: const Color.fromRGBO(220, 238, 219, 1),
+                                color: Color.fromRGBO(220, 238, 219, 1),
                                 fontSize: 35,
                                 fontWeight: FontWeight.w600,
                                 height: 1.1,
@@ -559,7 +559,7 @@ class FollowersClientsStatsPage extends StatelessWidget {
                         'See your best performing posts',
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
-                            color: const Color.fromRGBO(220, 238, 219, 1),
+                            color: Color.fromRGBO(220, 238, 219, 1),
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                             height: 1.1,
