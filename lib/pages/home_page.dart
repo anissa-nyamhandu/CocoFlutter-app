@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_app/pages/learning_page.dart';
 import 'package:my_app/pages/track_performance_page.dart';
 import 'package:my_app/pages/create_post_flow.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -102,7 +103,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 // ---------------------------------------------------------
-// DASHBOARD TAB (Sticky Header Version)
+// DASHBOARD CONTENT
 // ---------------------------------------------------------
 
 class DashboardTab extends StatelessWidget {
@@ -114,240 +115,522 @@ class DashboardTab extends StatelessWidget {
       color: const Color(0xFFE0EAD8), // Main background color (sticky)
       child: SafeArea(
         // We switch to a Column to separate the Fixed part from the Scrolling part
-        child: Column(
+        // child: Column(
+        //   children: [
+        //     // 1. FIXED HEADER
+        //     // This stays at the top because it's outside the ScrollView
+        //     Padding(
+        //       padding: const EdgeInsets.all(24.0),
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //         children: [
+        //           Column(
+        //             crossAxisAlignment: CrossAxisAlignment.start,
+        //             children: [
+        //               const Icon(
+        //                 Icons.menu,
+        //                 size: 30,
+        //                 color: Color(0xFF3D2E3B),
+        //               ),
+        //               const SizedBox(height: 16),
+        //               RichText(
+        //                 text: const TextSpan(
+        //                   style: TextStyle(
+        //                     fontSize: 32,
+        //                     fontWeight: FontWeight.w700,
+        //                     color: Color(0xFF3D2E3B),
+        //                     fontFamily: 'Arial',
+        //                   ),
+        //                   children: [
+        //                     TextSpan(text: 'Hello\n'),
+        //                     TextSpan(text: 'Raluca!'),
+        //                   ],
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //           const CircleAvatar(
+        //             radius: 40,
+        //             backgroundImage: NetworkImage(
+        //               'https://i.imgur.com/1Xz7y7o.jpeg',
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+
+        //     // 2. SCROLLABLE CONTENT
+        //     // Expanded ensures this takes up all remaining space
+        //     Expanded(
+        //       child: SingleChildScrollView(
+        //         physics: const BouncingScrollPhysics(),
+        //         child: Padding(
+        //           padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        //           child: Column(
+        //             crossAxisAlignment: CrossAxisAlignment.start,
+        //             children: [
+        //               // Space between the fixed header and the first card
+        //               const SizedBox(height: 10),
+
+        //               // Goal Card
+        //               Container(
+        //                 width: double.infinity,
+        //                 padding: const EdgeInsets.all(24),
+        //                 decoration: BoxDecoration(
+        //                   color: const Color(0xFF885B73),
+        //                   borderRadius: BorderRadius.circular(20),
+        //                 ),
+        //                 child: Column(
+        //                   crossAxisAlignment: CrossAxisAlignment.start,
+        //                   children: [
+        //                     Row(
+        //                       crossAxisAlignment: CrossAxisAlignment.start,
+        //                       children: const [
+        //                         Text(
+        //                           '20',
+        //                           style: TextStyle(
+        //                             fontSize: 96,
+        //                             fontWeight: FontWeight.w700,
+        //                             color: Color(0xFFFFC1E3),
+        //                             height: 1.0,
+        //                           ),
+        //                         ),
+        //                         Text(
+        //                           '%',
+        //                           style: TextStyle(
+        //                             fontSize: 48,
+        //                             fontWeight: FontWeight.w700,
+        //                             color: Color(0xFFFFC1E3),
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ),
+        //                     const Text(
+        //                       'closer to...',
+        //                       style: TextStyle(
+        //                         color: Colors.white70,
+        //                         fontSize: 18,
+        //                       ),
+        //                     ),
+        //                     const Text(
+        //                       'Your\nGoal',
+        //                       style: TextStyle(
+        //                         fontSize: 32,
+        //                         fontWeight: FontWeight.w700,
+        //                         color: Color(0xFFFFC1E3),
+        //                         height: 1.1,
+        //                       ),
+        //                     ),
+        //                     const SizedBox(height: 16),
+        //                     const Text(
+        //                       'Reach 10k Instagram followers in 6 months by posting consistent, niche content that builds credibility.',
+        //                       style: TextStyle(
+        //                         color: Colors.white70,
+        //                         fontSize: 16,
+        //                       ),
+        //                     ),
+        //                   ],
+        //                 ),
+        //               ),
+        //               const SizedBox(height: 32),
+
+        //               // Posting Queue Header
+        //               Row(
+        //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                 children: [
+        //                   const Text(
+        //                     'Your posting\nQueue',
+        //                     style: TextStyle(
+        //                       fontSize: 24,
+        //                       fontWeight: FontWeight.w700,
+        //                       color: Color(0xFF3D2E3B),
+        //                     ),
+        //                   ),
+        //                   Row(
+        //                     children: [
+        //                       Container(
+        //                         width: 24,
+        //                         height: 8,
+        //                         decoration: BoxDecoration(
+        //                           color: const Color(0xFF885B73),
+        //                           borderRadius: BorderRadius.circular(4),
+        //                         ),
+        //                       ),
+        //                       const SizedBox(width: 8),
+        //                       Container(
+        //                         width: 8,
+        //                         height: 8,
+        //                         decoration: BoxDecoration(
+        //                           color: const Color(0xFF8FC89C),
+        //                           borderRadius: BorderRadius.circular(4),
+        //                         ),
+        //                       ),
+        //                       const SizedBox(width: 8),
+        //                       Container(
+        //                         width: 8,
+        //                         height: 8,
+        //                         decoration: BoxDecoration(
+        //                           color: const Color(0xFF8FC89C),
+        //                           borderRadius: BorderRadius.circular(4),
+        //                         ),
+        //                       ),
+        //                     ],
+        //                   ),
+        //                 ],
+        //               ),
+        //               const SizedBox(height: 16),
+
+        //               // No Posts Card
+        //               Container(
+        //                 width: double.infinity,
+        //                 padding: const EdgeInsets.symmetric(
+        //                   vertical: 48,
+        //                   horizontal: 24,
+        //                 ),
+        //                 decoration: BoxDecoration(
+        //                   color: const Color(0xFF8FC89C),
+        //                   borderRadius: BorderRadius.circular(20),
+        //                 ),
+        //                 child: Column(
+        //                   children: const [
+        //                     Text(
+        //                       'No posts scheduled yet',
+        //                       style: TextStyle(
+        //                         fontSize: 20,
+        //                         fontWeight: FontWeight.w600,
+        //                         color: Colors.white,
+        //                       ),
+        //                     ),
+        //                     SizedBox(height: 8),
+        //                     Text(
+        //                       'Schedule some posts and\nthey will appear here.',
+        //                       textAlign: TextAlign.center,
+        //                       style: TextStyle(
+        //                         fontSize: 16,
+        //                         color: Colors.white70,
+        //                       ),
+        //                     ),
+        //                   ],
+        //                 ),
+        //               ),
+        //               const SizedBox(height: 32),
+
+        //               // Saved Ideas Button
+        //               Container(
+        //                 width: double.infinity,
+        //                 padding: const EdgeInsets.symmetric(vertical: 16),
+        //                 decoration: BoxDecoration(
+        //                   color: const Color(0xFF3D2E3B),
+        //                   borderRadius: BorderRadius.circular(12),
+        //                 ),
+        //                 child: Row(
+        //                   mainAxisAlignment: MainAxisAlignment.center,
+        //                   children: const [
+        //                     Icon(
+        //                       Icons.lightbulb_outline,
+        //                       color: Colors.white,
+        //                       size: 28,
+        //                     ),
+        //                     SizedBox(width: 12),
+        //                     Text(
+        //                       'Saved ideas',
+        //                       style: TextStyle(
+        //                         fontSize: 20,
+        //                         fontWeight: FontWeight.w600,
+        //                         color: Colors.white,
+        //                       ),
+        //                     ),
+        //                   ],
+        //                 ),
+        //               ),
+
+        //               // Extra padding at the bottom for comfortable scrolling
+        //               const SizedBox(height: 40),
+        //             ],
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+
+        //new implementation
+        child: ListView(
           children: [
-            // 1. FIXED HEADER
-            // This stays at the top because it's outside the ScrollView
             Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.menu,
-                        size: 30,
-                        color: Color(0xFF3D2E3B),
-                      ),
-                      const SizedBox(height: 16),
-                      RichText(
-                        text: const TextSpan(
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF3D2E3B),
-                            fontFamily: 'Arial',
+                  //hello user text + user pfp
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: Stack(
+                      children: [
+                        //hello user text
+                        Positioned(
+                          top: 25,
+                          child: Text(
+                            'Hello\nRaluca!',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                color: Color.fromARGB(255, 65, 35, 52),
+                                fontSize: 36,
+                                fontWeight: FontWeight.w600,
+                                height: 1,
+                              ),
+                            ),
                           ),
-                          children: [
-                            TextSpan(text: 'Hello\n'),
-                            TextSpan(text: 'Raluca!'),
-                          ],
+                        ),
+
+                        //pfp
+                        Positioned(
+                          right: 5,
+                          child: Image.asset(
+                            'images/pfp.png',
+                            height: 100,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  //goal card
+                  Stack(
+                    children: [
+                      //purple box
+                      Container(
+                        height: 280,
+                        margin: EdgeInsets.only(top: 25),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(133, 88, 114, 1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+
+                      //digits
+                      Positioned(
+                        top: 20,
+                        left: 10,
+                        child: Text(
+                          '20',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                              color: Color.fromARGB(255, 254, 176, 220),
+                              fontSize: 110,
+                              fontWeight: FontWeight.w500,
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //percentage
+                      Positioned(
+                        top: 70,
+                        left: 145,
+                        child: Text(
+                          '%',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                              color: Color.fromARGB(255, 254, 176, 220),
+                              fontSize: 50,
+                              fontWeight: FontWeight.w500,
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Positioned(
+                        top: 130,
+                        left: 20,
+                        child: Text(
+                          'closer to...',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                              color: Color.fromRGBO(220, 238, 219, 1),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Positioned(
+                        top: 155,
+                        left: 20,
+                        child: Text(
+                          'Your\nGoal',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                              color: Color.fromARGB(255, 254, 176, 220),
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Positioned(
+                        top: 210,
+                        left: 20,
+                        child: SizedBox(
+                          width: 315,
+                          height: 80,
+                          child: Text(
+                            'Reach 10k Instagram followers in 6 months by posting consistent, niche content that builds credibility and grows your personal brand.',
+                            softWrap: true,
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                color: Color.fromRGBO(220, 238, 219, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: NetworkImage(
-                      'https://i.imgur.com/1Xz7y7o.jpeg',
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
-            // 2. SCROLLABLE CONTENT
-            // Expanded ensures this takes up all remaining space
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Space between the fixed header and the first card
-                      const SizedBox(height: 10),
-
-                      // Goal Card
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF885B73),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  '20',
-                                  style: TextStyle(
-                                    fontSize: 96,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFFFFC1E3),
-                                    height: 1.0,
-                                  ),
-                                ),
-                                Text(
-                                  '%',
-                                  style: TextStyle(
-                                    fontSize: 48,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFFFFC1E3),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Text(
-                              'closer to...',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const Text(
-                              'Your\nGoal',
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFFFFC1E3),
-                                height: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Reach 10k Instagram followers in 6 months by posting consistent, niche content that builds credibility.',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                  //small headline
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Text(
+                      'Your posting\nQueue',
+                      style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                          color: Color.fromARGB(255, 65, 35, 52),
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          height: 1,
                         ),
                       ),
-                      const SizedBox(height: 32),
+                    ),
+                  ),
 
-                      // Posting Queue Header
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Your posting\nQueue',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF3D2E3B),
-                            ),
-                          ),
-                          Row(
+                  //posting green space
+                  Stack(
+                    children: [
+                      //green box
+                      Container(
+                        height: 160,
+                        margin: EdgeInsets.only(top: 20),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(139, 179, 136, 1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+
+                      //text
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 55),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            spacing: 10,
                             children: [
-                              Container(
-                                width: 24,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF885B73),
-                                  borderRadius: BorderRadius.circular(4),
+                              Text(
+                                'No post scheduled yet',
+                                style: GoogleFonts.poppins(
+                                  textStyle: const TextStyle(
+                                    color: Color.fromRGBO(220, 238, 219, 1),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.1,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF8FC89C),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF8FC89C),
-                                  borderRadius: BorderRadius.circular(4),
+
+                              SizedBox(
+                                width: 155,
+                                height: 60,
+                                child: Text(
+                                  'Schedule some posts and they will appear here.',
+                                  softWrap: true,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.poppins(
+                                    textStyle: const TextStyle(
+                                      color: Color.fromRGBO(220, 238, 219, 1),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // No Posts Card
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 48,
-                          horizontal: 24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF8FC89C),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          children: const [
-                            Text(
-                              'No posts scheduled yet',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Schedule some posts and\nthey will appear here.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                      const SizedBox(height: 32),
-
-                      // Saved Ideas Button
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF3D2E3B),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.lightbulb_outline,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                            SizedBox(width: 12),
-                            Text(
-                              'Saved ideas',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Extra padding at the bottom for comfortable scrolling
-                      const SizedBox(height: 40),
                     ],
                   ),
-                ),
+
+                  //saved ideas button
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25, bottom: 30),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/bestpostspage');
+                      },
+
+                      child: Stack(
+                        children: [
+                          //dark purple box
+                          Container(
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 65, 35, 52),
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color.fromARGB(97, 16, 0, 22),
+                                  spreadRadius: 2.5,
+                                  blurRadius: 5,
+                                  offset: Offset(2, 4),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          //icon
+                          Positioned(
+                            top: 17,
+                            right: 160,
+                            child: Image.asset(
+                              'images/light-bulb-icon.png',
+                              height: 25,
+                            ),
+                          ),
+
+                          //button text
+                          Positioned(
+                            top: 20,
+                            right: 20,
+                            child: Text(
+                              'Saved ideas',
+                              style: GoogleFonts.poppins(
+                                textStyle: const TextStyle(
+                                  color: Color.fromRGBO(220, 238, 219, 1),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
