@@ -477,7 +477,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
                   ),
                 ],
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 5),
 
               // selecting months
               Row(
@@ -506,11 +506,11 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               _buildDynamicCalendar(),
 
-              const SizedBox(height: 35),
+              const SizedBox(height: 25),
 
               // time picker
               Row(
@@ -550,7 +550,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
                   style: const TextStyle(fontSize: 13, color: Colors.grey),
                 ),
               ),
-              const SizedBox(height: 45),
+              const SizedBox(height: 30),
 
               SizedBox(
                 width: double.infinity,
