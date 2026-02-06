@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:my_app/pages/learning_page.dart';
 import 'package:my_app/pages/track_performance_page.dart';
 import 'package:my_app/pages/create_post_flow.dart';
+
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:my_app/pages/schedule_page.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,7 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const DashboardTab(),
-    const Center(child: Text("Schedule Page")),
+    const SchedulePage(),
     const CreatePostFlow(),
     LearningPage(),
     TrackPerformancePage(),
