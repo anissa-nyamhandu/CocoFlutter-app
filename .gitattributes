@@ -1,0 +1,15 @@
+# Dart files
+*.dart text eol=lf
+
+# Kotlin / Gradle files
+*.kt text eol=lf
+*.kts text eol=lf
+
+# Swift files (iOS/macOS)
+*.swift text eol=lf
+
+# JSON files
+*.json text eol=lf
+
+# Text files
+*.txt text eol=lf
