@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "313098366907",
+    "project_id": "coco-app-37eb0",
+    "storage_bucket": "coco-app-37eb0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313098366907:android:c169befa94d7df7c629e9e",
+        "android_client_info": {
+          "package_name": "com.example.my_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5QPTMgT-LqGVNkwvYxg9ZcNmnpkttKFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
