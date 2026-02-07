@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:my_app/pages/schedule_page.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -340,10 +339,7 @@ class DashboardTab extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 25, bottom: 30),
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/bestpostspage');
-                      },
-
+                      onTap: () {},
                       child: Stack(
                         children: [
                           //dark purple box

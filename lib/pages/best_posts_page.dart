@@ -6,11 +6,11 @@ class BestPostsPage extends StatelessWidget {
   const BestPostsPage({super.key});
 
   // Brand Colors
-  final Color kBackground = const Color(0xFFE0EAD8); 
-  final Color kDarkPurple = const Color(0xFF3D2E3B); 
-  final Color kAccentPink = const Color(0xFFFFC1E3); 
-  final Color kAccentGreen = const Color(0xFF8BB388); 
-  final Color kCardColor = const Color(0xFFF2F8F2); 
+  final Color kBackground = const Color(0xFFDCEEDB);
+  final Color kDarkPurple = const Color(0xFF3D2E3B);
+  final Color kAccentPink = const Color(0xFFFEB0DC);
+  final Color kAccentGreen = const Color(0xFF8BB388);
+  final Color kCardColor = const Color(0xFFF2F8F2);
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +20,9 @@ class BestPostsPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         title: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(left: 0.0),
           child: Text(
             'Best Performing Posts',
             style: GoogleFonts.poppins(
@@ -60,14 +60,14 @@ class BestPostsPage extends StatelessWidget {
               'Day in the Life of a Coder',
               '8.2k views',
               '1.1k likes',
-              'assets/images/tiktok-icon.png', // UPDATED PATH
+              'images/tiktok-icon.png',
             ),
             const SizedBox(height: 12),
             _buildPostListItem(
               'Debugging Secrets Revealed',
               '6.5k views',
               '890 likes',
-              'assets/images/ig-icon.png', // UPDATED PATH
+              'images/instagram-icon.png',
             ),
             const SizedBox(height: 24),
 
@@ -108,7 +108,10 @@ class BestPostsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: kAccentPink,
                   borderRadius: BorderRadius.circular(20),
@@ -130,14 +133,15 @@ class BestPostsPage extends StatelessWidget {
               ),
               // UPDATED: Added error builder to prevent crash if icon is missing
               Image.asset(
-                'assets/images/ig-icon.png',
+                'images/instagram-icon.png',
                 height: 24,
-                errorBuilder: (c, o, s) => Icon(Icons.camera_alt, color: kDarkPurple),
+                errorBuilder: (c, o, s) =>
+                    Icon(Icons.camera_alt, color: kDarkPurple),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Thumbnail and Title
           Row(
             children: [
@@ -153,16 +157,19 @@ class BestPostsPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    'assets/images/coding-setup.jpg', // UPDATED PATH
+                    'images/coding-setup.png',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.image_not_supported, color: Colors.grey[600]);
+                      return Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey[600],
+                      );
                     },
                   ),
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // EXPANDED prevents RenderFlex Overflow error
               Expanded(
                 child: Column(
@@ -197,7 +204,11 @@ class BestPostsPage extends StatelessWidget {
             children: [
               _buildMetricItem('12.4k', 'Views', Icons.visibility_outlined),
               _buildMetricItem('1.5k', 'Likes', Icons.favorite_border),
-              _buildMetricItem('240', 'Cmnts', Icons.chat_bubble_outline), // Shortened text to prevent overflow
+              _buildMetricItem(
+                '240',
+                'Cmnts',
+                Icons.chat_bubble_outline,
+              ), // Shortened text to prevent overflow
               _buildMetricItem('450', 'Shares', Icons.share_outlined),
             ],
           ),
@@ -269,22 +280,52 @@ class BestPostsPage extends StatelessWidget {
               BarChartData(
                 gridData: FlGridData(show: false),
                 titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         switch (value.toInt()) {
                           case 0:
-                            return Text('Likes', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                            return Text(
+                              'Likes',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                            );
                           case 1:
-                            return Text('Cmnts', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                            return Text(
+                              'Cmnts',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                            );
                           case 2:
-                            return Text('Share', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                            return Text(
+                              'Share',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                            );
                           case 3:
-                            return Text('Saves', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                            return Text(
+                              'Saves',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                            );
                           default:
                             return const Text('');
                         }
@@ -294,10 +335,10 @@ class BestPostsPage extends StatelessWidget {
                 ),
                 borderData: FlBorderData(show: false),
                 barGroups: [
-                  _makeBarGroup(0, 1500, kAccentPink), 
-                  _makeBarGroup(1, 240, kAccentGreen), 
-                  _makeBarGroup(2, 450, kAccentPink), 
-                  _makeBarGroup(3, 600, kAccentGreen), 
+                  _makeBarGroup(0, 1500, kAccentPink),
+                  _makeBarGroup(1, 240, kAccentGreen),
+                  _makeBarGroup(2, 450, kAccentPink),
+                  _makeBarGroup(3, 600, kAccentGreen),
                 ],
               ),
             ),
@@ -321,7 +362,12 @@ class BestPostsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPostListItem(String title, String views, String likes, String iconPath) {
+  Widget _buildPostListItem(
+    String title,
+    String views,
+    String likes,
+    String iconPath,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -341,7 +387,7 @@ class BestPostsPage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
-                'assets/images/placeholder-thumbnail.jpg', // UPDATED PATH
+                'images/placeholder-thumbnail.png', // UPDATED PATH
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(Icons.image, color: Colors.grey[600]);
@@ -361,7 +407,7 @@ class BestPostsPage extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     color: kDarkPurple,
                   ),
-                  maxLines: 1, 
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
@@ -389,10 +435,11 @@ class BestPostsPage extends StatelessWidget {
           ),
           // UPDATED: Added crash protection for small icons
           Image.asset(
-            iconPath, 
-            width: 24, 
+            iconPath,
+            width: 24,
             height: 24,
-            errorBuilder: (context, error, stackTrace) => const SizedBox(width: 24),
+            errorBuilder: (context, error, stackTrace) =>
+                const SizedBox(width: 24),
           ),
         ],
       ),

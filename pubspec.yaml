@@ -97,7 +97,8 @@ flutter:
     - images/pfp.png
     - images/tiktok-icon.png
     - images/instagram-icon.png
-    - assets/images/
+    - images/coding-setup.png
+    - images/placeholder-thumbnail.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
