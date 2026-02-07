@@ -99,6 +99,7 @@ flutter:
     - images/instagram-icon.png
     - images/coding-setup.png
     - images/placeholder-thumbnail.png
+    - images/imagescoding-setup.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

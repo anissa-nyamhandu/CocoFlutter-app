@@ -661,7 +661,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
                 '$day',
                 style: TextStyle(
                   fontSize: 16,
-                  color: const Color(0xFF3D2E3B).withOpacity(0.7),
+                  color: const Color(0xFF3D2E3B).withValues(alpha: 0.7),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),

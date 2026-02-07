@@ -60,14 +60,16 @@ class BestPostsPage extends StatelessWidget {
               'Day in the Life of a Coder',
               '8.2k views',
               '1.1k likes',
-              'images/tiktok-icon.png',
+              'images/tiktok-icon.png', // Corrected from list
+              'images/tiktok-post-1.png', // Using real post image from list
             ),
             const SizedBox(height: 12),
             _buildPostListItem(
               'Debugging Secrets Revealed',
               '6.5k views',
               '890 likes',
-              'images/instagram-icon.png',
+              'images/instagram-icon.png', // Corrected from list
+              'images/insta-post-1.png', // Using real post image from list
             ),
             const SizedBox(height: 24),
 
@@ -108,10 +110,7 @@ class BestPostsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: kAccentPink,
                   borderRadius: BorderRadius.circular(20),
@@ -131,22 +130,18 @@ class BestPostsPage extends StatelessWidget {
                   ],
                 ),
               ),
-              // UPDATED: Added error builder to prevent crash if icon is missing
               Image.asset(
-                'images/instagram-icon.png',
+                'images/instagram-icon.png', // Matching exact list name
                 height: 24,
-                errorBuilder: (c, o, s) =>
-                    Icon(Icons.camera_alt, color: kDarkPurple),
+                errorBuilder: (c, o, s) => Icon(Icons.camera_alt, color: kDarkPurple),
               ),
             ],
           ),
           const SizedBox(height: 16),
-
+          
           // Thumbnail and Title
           Row(
             children: [
-              // UPDATED: Changed from DecorationImage to ClipRRect + Image.asset
-              // This allows us to handle missing images without crashing
               Container(
                 width: 80,
                 height: 80,
@@ -157,20 +152,16 @@ class BestPostsPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    'images/coding-setup.png',
+                    'images/imagescoding-setup.png', // Matching exact list name
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey[600],
-                      );
+                      return Icon(Icons.image_not_supported, color: Colors.grey[600]);
                     },
                   ),
                 ),
               ),
               const SizedBox(width: 16),
-
-              // EXPANDED prevents RenderFlex Overflow error
+              
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +173,7 @@ class BestPostsPage extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: kDarkPurple,
                       ),
-                      maxLines: 2, // Added safety for long titles
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
@@ -204,11 +195,7 @@ class BestPostsPage extends StatelessWidget {
             children: [
               _buildMetricItem('12.4k', 'Views', Icons.visibility_outlined),
               _buildMetricItem('1.5k', 'Likes', Icons.favorite_border),
-              _buildMetricItem(
-                '240',
-                'Cmnts',
-                Icons.chat_bubble_outline,
-              ), // Shortened text to prevent overflow
+              _buildMetricItem('240', 'Cmnts', Icons.chat_bubble_outline), 
               _buildMetricItem('450', 'Shares', Icons.share_outlined),
             ],
           ),
@@ -253,6 +240,7 @@ class BestPostsPage extends StatelessWidget {
         children: [
           Row(
             children: [
+              // Using light bulb icon if you prefer, otherwise Icon
               Icon(Icons.lightbulb_outline, color: kAccentPink, size: 24),
               const SizedBox(width: 8),
               Text(
@@ -280,54 +268,19 @@ class BestPostsPage extends StatelessWidget {
               BarChartData(
                 gridData: FlGridData(show: false),
                 titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
+                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         switch (value.toInt()) {
-                          case 0:
-                            return Text(
-                              'Likes',
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 10,
-                              ),
-                            );
-                          case 1:
-                            return Text(
-                              'Cmnts',
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 10,
-                              ),
-                            );
-                          case 2:
-                            return Text(
-                              'Share',
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 10,
-                              ),
-                            );
-                          case 3:
-                            return Text(
-                              'Saves',
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 10,
-                              ),
-                            );
-                          default:
-                            return const Text('');
+                          case 0: return Text('Likes', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                          case 1: return Text('Cmnts', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                          case 2: return Text('Share', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                          case 3: return Text('Saves', style: GoogleFonts.poppins(color: Colors.white, fontSize: 10));
+                          default: return const Text('');
                         }
                       },
                     ),
@@ -335,10 +288,10 @@ class BestPostsPage extends StatelessWidget {
                 ),
                 borderData: FlBorderData(show: false),
                 barGroups: [
-                  _makeBarGroup(0, 1500, kAccentPink),
-                  _makeBarGroup(1, 240, kAccentGreen),
-                  _makeBarGroup(2, 450, kAccentPink),
-                  _makeBarGroup(3, 600, kAccentGreen),
+                  _makeBarGroup(0, 1500, kAccentPink), 
+                  _makeBarGroup(1, 240, kAccentGreen), 
+                  _makeBarGroup(2, 450, kAccentPink), 
+                  _makeBarGroup(3, 600, kAccentGreen), 
                 ],
               ),
             ),
@@ -362,12 +315,7 @@ class BestPostsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPostListItem(
-    String title,
-    String views,
-    String likes,
-    String iconPath,
-  ) {
+  Widget _buildPostListItem(String title, String views, String likes, String iconPath, String thumbnailPath) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -376,7 +324,6 @@ class BestPostsPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // UPDATED: Added crash protection for missing images
           Container(
             width: 60,
             height: 60,
@@ -387,7 +334,7 @@ class BestPostsPage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
-                'images/placeholder-thumbnail.png', // UPDATED PATH
+                thumbnailPath, // Using explicit path passed in
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(Icons.image, color: Colors.grey[600]);
@@ -407,7 +354,7 @@ class BestPostsPage extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     color: kDarkPurple,
                   ),
-                  maxLines: 1,
+                  maxLines: 1, 
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
@@ -433,13 +380,11 @@ class BestPostsPage extends StatelessWidget {
               ],
             ),
           ),
-          // UPDATED: Added crash protection for small icons
           Image.asset(
-            iconPath,
-            width: 24,
+            iconPath, 
+            width: 24, 
             height: 24,
-            errorBuilder: (context, error, stackTrace) =>
-                const SizedBox(width: 24),
+            errorBuilder: (context, error, stackTrace) => const SizedBox(width: 24),
           ),
         ],
       ),
