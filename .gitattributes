@@ -1,15 +1,68 @@
-# Dart files
+# -----------------------
+# Flutter / Dart files
+# -----------------------
 *.dart text eol=lf
-
-# Kotlin / Gradle files
-*.kt text eol=lf
-*.kts text eol=lf
-
-# Swift files (iOS/macOS)
-*.swift text eol=lf
-
-# JSON files
+*.yaml text eol=lf
+*.yml text eol=lf
 *.json text eol=lf
 
-# Text files
+# -----------------------
+# Android / Kotlin / Gradle
+# -----------------------
+*.kt text eol=lf
+*.kts text eol=lf
+*.gradle text eol=lf
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+
+# -----------------------
+# iOS / macOS / Swift / Xcode
+# -----------------------
+*.swift text eol=lf
+*.plist text eol=lf
+*.h text eol=lf
+*.m text eol=lf
+*.mm text eol=lf
+*.xcconfig text eol=lf
+*.xcscheme text eol=lf
+*.pbxproj text eol=lf
+
+# -----------------------
+# Firebase config files
+# -----------------------
+google-services.json text eol=lf
+GoogleService-Info.plist text eol=lf
+firebase_options.dart text eol=lf
+
+# -----------------------
+# Windows
+# -----------------------
+*.cpp text eol=lf
+*.h text eol=lf
+*.c text eol=lf
+*.cc text eol=lf
+*.cs text eol=lf
+*.rc text eol=lf
+*.cmake text eol=lf
+*.sln text eol=lf
+
+# -----------------------
+# Text / scripts / markdown
+# -----------------------
+*.sh text eol=lf
+*.bat text eol=crlf
 *.txt text eol=lf
+*.md text eol=lf
+
+# -----------------------
+# Binary files (do not normalize)
+# -----------------------
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.lock binary
+*.tflite binary
+*.db binary
+*.sqlite binary
