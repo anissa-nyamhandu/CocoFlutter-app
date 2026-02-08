@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/services/auth_service.dart';
 
 class OnboardingFlow extends StatefulWidget {
   const OnboardingFlow({super.key});
@@ -19,18 +20,19 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   // --- State Management ---
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  
+
   // Form State
+  final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+
   // Selections
   List<String> selectedNiches = [];
   String? selectedGoal;
 
   // Data Lists
   final List<String> niches = [
-    'Fashion', 'Tech', 'Fitness', 'Food', 'Travel', 
+    'Fashion', 'Tech', 'Fitness', 'Food', 'Travel',
     'Beauty', 'Gaming', 'Education', 'Lifestyle', 'Business'
   ];
 
@@ -43,6 +45,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   @override
   void dispose() {
     _pageController.dispose();
+    _fullNameController.dispose(); // Added dispose for full name
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -97,7 +100,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   // --- WIDGET: Progress Dot ---
   Widget _buildDot(int index) {
     // Adjust index because page 0 (Welcome) doesn't have dots in this logic
-    int actualStep = _currentPage - 1; 
+    int actualStep = _currentPage - 1;
     bool isActive = index == actualStep;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -152,20 +155,20 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           ),
           const Spacer(),
           _buildButton(
-            label: "Get Started", 
+            label: "Get Started",
             onTap: _nextPage,
-            isPrimary: true
+            isPrimary: true,
           ),
           const SizedBox(height: 16),
           _buildButton(
-            label: "I already have an account", 
+            label: "I already have an account",
             onTap: () {
-               // Navigate to a separate Login Page here
-               ScaffoldMessenger.of(context).showSnackBar(
-                 const SnackBar(content: Text("Navigate to Login Page"))
-               );
+              // Navigate to a separate Login Page here
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Navigate to Login Page")),
+              );
             },
-            isPrimary: false
+            isPrimary: false,
           ),
           const SizedBox(height: 20),
         ],
@@ -182,18 +185,77 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
         children: [
           IconButton(
             icon: Icon(Icons.arrow_back, color: kPrimary),
-            onPressed: () => _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.ease),
+            onPressed: () => _pageController.previousPage(
+                duration: const Duration(milliseconds: 300), curve: Curves.ease),
           ),
           const SizedBox(height: 20),
-          Text("Let's get you\nset up.", style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.bold, color: kPrimary)),
+          Text(
+            "Let's get you\nset up.",
+            style: GoogleFonts.poppins(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: kPrimary,
+            ),
+          ),
           const SizedBox(height: 40),
-          _buildTextField("Full Name", false),
+
+          // UPDATED: Now passing the named argument 'controller' correctly
+          _buildTextField(
+            "Full Name",
+            false,
+            controller: _fullNameController,
+          ),
           const SizedBox(height: 20),
-          _buildTextField("Email Address", false),
+
+          _buildTextField(
+            "Email Address",
+            false,
+            controller: _emailController,
+          ),
           const SizedBox(height: 20),
-          _buildTextField("Password", true),
+
+          _buildTextField(
+            "Password",
+            true,
+            controller: _passwordController,
+          ),
           const SizedBox(height: 40),
-          _buildButton(label: "Create Account", onTap: _nextPage, isPrimary: true),
+
+          _buildButton(
+            label: "Create Account",
+            isPrimary: true,
+            onTap: () async {
+              if (_fullNameController.text.isEmpty ||
+                  _emailController.text.isEmpty ||
+                  _passwordController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please fill all fields")),
+                );
+                return;
+              }
+
+              try {
+                // Assuming AuthService exists and is imported correctly
+                await AuthService().signUp(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text.trim(),
+                  fullName: _fullNameController.text.trim(),
+                  niches: selectedNiches,
+                  goal: selectedGoal ?? '',
+                );
+
+                // FIXED: Check if the widget is still on screen before acting on context
+                if (!mounted) return;
+
+                _nextPage(); // go to next onboarding screen
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Signup failed: $e")),
+                );
+              }
+            },
+          ),
         ],
       ),
     );
@@ -206,51 +268,66 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text("What is your\nBusiness Niche?", style: GoogleFonts.poppins(fontSize: 26, fontWeight: FontWeight.bold, color: kPrimary)),
-           const SizedBox(height: 8),
-           Text("Select all that apply.", style: GoogleFonts.poppins(fontSize: 14, color: kPrimary.withValues(alpha: 0.6))),
-           const SizedBox(height: 30),
-           Expanded(
-             child: SingleChildScrollView(
-               child: Wrap(
-                 spacing: 12,
-                 runSpacing: 12,
-                 children: niches.map((niche) {
-                   final isSelected = selectedNiches.contains(niche);
-                   return InkWell(
-                     onTap: () {
-                       setState(() {
-                         isSelected ? selectedNiches.remove(niche) : selectedNiches.add(niche);
-                       });
-                     },
-                     borderRadius: BorderRadius.circular(20),
-                     child: AnimatedContainer(
-                       duration: const Duration(milliseconds: 200),
-                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                       decoration: BoxDecoration(
-                         color: isSelected ? kAccent : kCard,
-                         borderRadius: BorderRadius.circular(20),
-                         border: Border.all(color: isSelected ? kAccent : Colors.transparent),
-                         boxShadow: isSelected ? [BoxShadow(color: kAccent.withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 4))] : [],
-                       ),
-                       child: Text(
-                         niche,
-                         style: GoogleFonts.poppins(
-                           fontWeight: FontWeight.w600,
-                           color: isSelected ? Colors.white : kPrimary,
-                         ),
-                       ),
-                     ),
-                   );
-                 }).toList(),
-               ),
-             ),
-           ),
-           _buildButton(
-             label: "Continue", 
-             onTap: selectedNiches.isNotEmpty ? _nextPage : () {}, // Disable if empty
-             isPrimary: selectedNiches.isNotEmpty
-           ),
+          Text("What is your\nBusiness Niche?",
+              style: GoogleFonts.poppins(
+                  fontSize: 26, fontWeight: FontWeight.bold, color: kPrimary)),
+          const SizedBox(height: 8),
+          Text("Select all that apply.",
+              style: GoogleFonts.poppins(
+                  fontSize: 14, color: kPrimary.withValues(alpha: 0.6))),
+          const SizedBox(height: 30),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: niches.map((niche) {
+                  final isSelected = selectedNiches.contains(niche);
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        isSelected
+                            ? selectedNiches.remove(niche)
+                            : selectedNiches.add(niche);
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: isSelected ? kAccent : kCard,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: isSelected ? kAccent : Colors.transparent),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                    color: kAccent.withValues(alpha: 0.4),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4))
+                              ]
+                            : [],
+                      ),
+                      child: Text(
+                        niche,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          color: isSelected ? Colors.white : kPrimary,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          _buildButton(
+            label: "Continue",
+            onTap: selectedNiches.isNotEmpty ? _nextPage : () {},
+            isPrimary: selectedNiches.isNotEmpty,
+          ),
         ],
       ),
     );
@@ -263,7 +340,9 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("What's your\nmain goal?", style: GoogleFonts.poppins(fontSize: 26, fontWeight: FontWeight.bold, color: kPrimary)),
+          Text("What's your\nmain goal?",
+              style: GoogleFonts.poppins(
+                  fontSize: 26, fontWeight: FontWeight.bold, color: kPrimary)),
           const SizedBox(height: 30),
           Expanded(
             child: ListView.separated(
@@ -272,18 +351,20 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
               itemBuilder: (context, index) {
                 final goal = goals[index];
                 final isSelected = selectedGoal == goal['title'];
-                
+
                 return GestureDetector(
                   onTap: () => setState(() => selectedGoal = goal['title']),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOutBack, // Gives it a bouncy "pop" effect
-                    height: isSelected ? 110 : 100, // Grows when selected
+                    curve: Curves.easeOutBack,
+                    height: isSelected ? 110 : 100,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: isSelected ? kAccent : kCard,
                       borderRadius: BorderRadius.circular(24),
-                      border: isSelected ? Border.all(color: kPrimary, width: 2) : Border.all(color: Colors.transparent),
+                      border: isSelected
+                          ? Border.all(color: kPrimary, width: 2)
+                          : Border.all(color: Colors.transparent),
                       boxShadow: [
                         BoxShadow(
                           color: kPrimary.withValues(alpha: 0.05),
@@ -297,10 +378,13 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.white.withValues(alpha: 0.2) : Colors.white,
+                            color: isSelected
+                                ? Colors.white.withValues(alpha: 0.2)
+                                : Colors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(goal['icon'], color: isSelected ? Colors.white : kPrimary),
+                          child: Icon(goal['icon'],
+                              color: isSelected ? Colors.white : kPrimary),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -308,13 +392,25 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(goal['title'], style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: isSelected ? Colors.white : kPrimary)),
-                              Text(goal['desc'], style: GoogleFonts.poppins(fontSize: 12, color: isSelected ? Colors.white.withValues(alpha: 0.9) : kPrimary.withValues(alpha: 0.6))),
+                              Text(goal['title'],
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : kPrimary)),
+                              Text(goal['desc'],
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: isSelected
+                                          ? Colors.white.withValues(alpha: 0.9)
+                                          : kPrimary.withValues(alpha: 0.6))),
                             ],
                           ),
                         ),
-                        if (isSelected) 
-                          Icon(Icons.check_circle, color: Colors.white, size: 28)
+                        if (isSelected)
+                          const Icon(Icons.check_circle,
+                              color: Colors.white, size: 28)
                       ],
                     ),
                   ),
@@ -323,10 +419,10 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             ),
           ),
           _buildButton(
-             label: "Finish Setup", 
-             onTap: selectedGoal != null ? _nextPage : () {},
-             isPrimary: selectedGoal != null
-           ),
+            label: "Finish Setup",
+            onTap: selectedGoal != null ? _nextPage : () {},
+            isPrimary: selectedGoal != null,
+          ),
         ],
       ),
     );
@@ -339,27 +435,28 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Simulated "Confetti" icon or use Lottie here
           Icon(Icons.celebration, size: 80, color: kPinkPop),
           const SizedBox(height: 24),
           Text(
             "You're all set!",
-            style: GoogleFonts.poppins(fontSize: 32, fontWeight: FontWeight.bold, color: kPrimary),
+            style: GoogleFonts.poppins(
+                fontSize: 32, fontWeight: FontWeight.bold, color: kPrimary),
           ),
           const SizedBox(height: 16),
           Text(
             "Your personalized dashboard is ready.\nLet's start growing.",
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(fontSize: 16, color: kPrimary.withValues(alpha: 0.7)),
+            style: GoogleFonts.poppins(
+                fontSize: 16, color: kPrimary.withValues(alpha: 0.7)),
           ),
           const SizedBox(height: 60),
           _buildButton(
-            label: "Open Dashboard", 
+            label: "Open Dashboard",
             onTap: () {
-              // UX TIP: PushReplacement prevents going back to onboarding
-              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-            }, 
-            isPrimary: true
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/home', (route) => false);
+            },
+            isPrimary: true,
           ),
         ],
       ),
@@ -367,7 +464,10 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   }
 
   // --- HELPER: Buttons ---
-  Widget _buildButton({required String label, required VoidCallback onTap, required bool isPrimary}) {
+  Widget _buildButton(
+      {required String label,
+      required VoidCallback onTap,
+      required bool isPrimary}) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -378,7 +478,9 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           elevation: isPrimary ? 4 : 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: isPrimary ? BorderSide.none : BorderSide(color: kPrimary, width: 2),
+            side: isPrimary
+                ? BorderSide.none
+                : BorderSide(color: kPrimary, width: 2),
           ),
         ),
         child: Text(
@@ -394,19 +496,24 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   }
 
   // --- HELPER: Text Field ---
-  Widget _buildTextField(String hint, bool isPassword) {
+  // FIXED: Updated to accept a nullable TextEditingController
+  Widget _buildTextField(String hint, bool isPassword,
+      {TextEditingController? controller}) {
     return Container(
       decoration: BoxDecoration(
         color: kCard,
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
+        controller: controller, // Now connecting the controller
         obscureText: isPassword,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.poppins(color: kPrimary.withValues(alpha: 0.4)),
+          hintStyle:
+              GoogleFonts.poppins(color: kPrimary.withValues(alpha: 0.4)),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
       ),
     );
