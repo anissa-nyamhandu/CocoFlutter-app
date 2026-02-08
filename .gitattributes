@@ -66,3 +66,5 @@ firebase_options.dart text eol=lf
 *.tflite binary
 *.db binary
 *.sqlite binary
+* text=auto
+*.dart text eol=lf
