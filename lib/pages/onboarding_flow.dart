@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 
 class OnboardingFlow extends StatefulWidget {
   const OnboardingFlow({super.key});
@@ -92,7 +95,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                     _buildWelcomeScreen(),
                     _buildSignUpScreen(),
                     _buildNicheScreen(),
-                    _buildGoalScreen(),
+                    _buildGoalScreen(), // This has the fix
                     _buildSuccessScreen(),
                   ],
                 ),
@@ -114,7 +117,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       height: 8,
       width: isActive ? 24 : 8,
       decoration: BoxDecoration(
-        color: isActive ? kPrimary : kPrimary.withValues(alpha: 0.2), // FIXED: withValues
+        color: isActive ? kPrimary : kPrimary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -155,7 +158,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 16,
-              color: kPrimary.withValues(alpha: 0.7), // FIXED: withValues
+              color: kPrimary.withValues(alpha: 0.7),
             ),
           ),
           const Spacer(),
@@ -178,7 +181,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     );
   }
 
-  // --- SCREEN 2: Sign Up (Data Collection Only) ---
+  // --- SCREEN 2: Sign Up (Create Auth & User Doc) ---
   Widget _buildSignUpScreen() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32.0),
@@ -210,11 +213,11 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           _buildTextField("Password", true, controller: _passwordController),
           const SizedBox(height: 40),
           _buildButton(
-            label: "Continue", // Changed from "Create Account"
+            label: "Continue",
             isPrimary: true,
-            onTap: () {
+            onTap: () async {
               _dismissKeyboard();
-              // Validation only - No API call yet
+
               if (_fullNameController.text.isEmpty ||
                   _emailController.text.isEmpty ||
                   _passwordController.text.isEmpty) {
@@ -223,8 +226,40 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                 );
                 return;
               }
-              // Move to next screen to collect Niche/Goal
-              _nextPage();
+
+              try {
+                // 1️⃣ Create Auth user
+                UserCredential credential =
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text,
+                );
+
+                final user = credential.user;
+                if (user == null) {
+                  throw Exception('User creation failed');
+                }
+
+                // 2️⃣ Create Firestore user document
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user.uid)
+                    .set({
+                  'fullName': _fullNameController.text.trim(),
+                  'email': user.email,
+                  'createdAt': FieldValue.serverTimestamp(),
+                });
+
+                // 3️⃣ Move to next screen (Niche selection)
+                if (!mounted) return;
+                _nextPage();
+
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(e.toString())),
+                );
+              }
             },
           ),
         ],
@@ -245,7 +280,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           const SizedBox(height: 8),
           Text("Select all that apply.",
               style: GoogleFonts.poppins(
-                  fontSize: 14, color: kPrimary.withValues(alpha: 0.6))), // FIXED
+                  fontSize: 14, color: kPrimary.withValues(alpha: 0.6))),
           const SizedBox(height: 30),
           Expanded(
             child: SingleChildScrollView(
@@ -275,7 +310,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                    color: kAccent.withValues(alpha: 0.4), // FIXED
+                                    color: kAccent.withValues(alpha: 0.4),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4))
                               ]
@@ -304,7 +339,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     );
   }
 
-  // --- SCREEN 4: Goal Selection & Final Signup ---
+  // --- SCREEN 4: Goal Selection & Final Update ---
   Widget _buildGoalScreen() {
     return Padding(
       padding: const EdgeInsets.all(32.0),
@@ -338,7 +373,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                           : Border.all(color: Colors.transparent),
                       boxShadow: [
                         BoxShadow(
-                          color: kPrimary.withValues(alpha: 0.05), // FIXED
+                          color: kPrimary.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         )
@@ -350,7 +385,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? Colors.white.withValues(alpha: 0.2) // FIXED
+                                ? Colors.white.withValues(alpha: 0.2)
                                 : Colors.white,
                             shape: BoxShape.circle,
                           ),
@@ -374,8 +409,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                                   style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       color: isSelected
-                                          ? Colors.white.withValues(alpha: 0.9) // FIXED
-                                          : kPrimary.withValues(alpha: 0.6))), // FIXED
+                                          ? Colors.white.withValues(alpha: 0.9)
+                                          : kPrimary.withValues(alpha: 0.6))),
                             ],
                           ),
                         ),
@@ -393,35 +428,40 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             label: "Finish Setup",
             isPrimary: selectedGoal != null,
             isLoading: _isLoading,
+            // ---------------------------------------------------------
+            // ✅ EXACT FIX: Update existing user instead of creating new
+            // ---------------------------------------------------------
             onTap: selectedGoal != null
                 ? () async {
                     setState(() => _isLoading = true);
 
                     try {
-                      // ACTUAL SIGNUP CALL HAPPENS HERE
-                      // We now have all the data required:
-                      // Email, Password, Name, Niches, and Goal
-                      await AuthService().signUp(
-                        email: _emailController.text.trim(),
-                        password: _passwordController.text.trim(),
-                        fullName: _fullNameController.text.trim(),
-                        niches: selectedNiches, // Now available!
-                        goal: selectedGoal!,    // Now available!
-                      );
-                      
+                      // 1. Get current user ID (created in previous step)
+                      final uid = FirebaseAuth.instance.currentUser!.uid;
+
+                      // 2. Update the existing document
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(uid)
+                          .update({
+                        'niches': selectedNiches,
+                        'goal': selectedGoal,
+                      });
+
                       if (!mounted) return;
-                      _nextPage(); // Go to success screen
-                      
+                      _nextPage(); // Move to Success Screen
+
                     } catch (e) {
                       if (!mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Signup failed: $e")),
+                        SnackBar(content: Text("Setup failed: $e")),
                       );
                     } finally {
                       if (mounted) setState(() => _isLoading = false);
                     }
                   }
                 : () {},
+            // ---------------------------------------------------------
           ),
         ],
       ),
@@ -447,7 +487,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             "Your personalized dashboard is ready.\nLet's start growing.",
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-                fontSize: 16, color: kPrimary.withValues(alpha: 0.7)), // FIXED
+                fontSize: 16, color: kPrimary.withValues(alpha: 0.7)),
           ),
           const SizedBox(height: 60),
           _buildButton(
@@ -519,7 +559,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle:
-              GoogleFonts.poppins(color: kPrimary.withValues(alpha: 0.4)), // FIXED
+              GoogleFonts.poppins(color: kPrimary.withValues(alpha: 0.4)),
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
