@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; 
 
+
 import 'package:my_app/pages/best_posts_page.dart';
 import 'package:my_app/pages/followers_clients_stats_page.dart';
 import 'package:my_app/pages/home_page.dart';
@@ -12,7 +13,8 @@ import 'package:my_app/pages/posts_stats_page.dart';
 import 'package:my_app/pages/track_performance_page.dart';
 import 'package:my_app/pages/create_post_flow.dart';
 import 'package:my_app/pages/schedule_page.dart';
-import 'package:my_app/pages/onboarding_flow.dart'; // Make sure this matches where you saved the file
+import 'package:my_app/pages/onboarding_flow.dart'; 
+import 'package:my_app/pages/login_page.dart';// Make sure this matches where you saved the file
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/schedule': (context) => const SchedulePage(),
         '/createpost': (context) => const CreatePostFlow(),
         '/onboarding': (context) => const OnboardingFlow(),
+        '/login': (context) => const LoginPage(),
       },
     );
   }

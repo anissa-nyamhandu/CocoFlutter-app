@@ -5,7 +5,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  /// SIGN UP
+  /// --- SIGN UP ---
   Future<User?> signUp({
     required String email,
     required String password,
@@ -13,41 +13,68 @@ class AuthService {
     required List<String> niches,
     required String goal,
   }) async {
-    // 1. Create user in Firebase Auth
-    UserCredential cred = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      // 1️⃣ Create user in Firebase Auth
+      UserCredential cred = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    User user = cred.user!;
+      User user = cred.user!;
 
-    // 2. Save extra data in Firestore
-    await _db.collection('users').doc(user.uid).set({
-      'uid': user.uid,
-      'email': email,
-      'fullName': fullName,
+      // 2️⃣ Save extra data in Firestore
+      await _db.collection('users').doc(user.uid).set({
+        'uid': user.uid,
+        'email': email,
+        'fullName': fullName,
+        'niches': niches,
+        'goal': goal,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      return user;
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.message);
+    }
+  }
+  
+/// UPDATE NICHES & GOAL
+Future<void> updateProfile({
+  required String uid,
+  required List<String> niches,
+  required String goal,
+}) async {
+  try {
+    await _db.collection('users').doc(uid).update({
       'niches': niches,
       'goal': goal,
-      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(), // optional, tracks when profile was updated
     });
-
-    return user;
+  } catch (e) {
+    // Provide a more descriptive error
+    throw Exception('Failed to update profile: $e');
   }
+}
 
-  /// LOGIN
-  Future<User?> login({
+
+  /// --- LOGIN ---
+  Future<UserCredential> signIn({
     required String email,
     required String password,
   }) async {
-    UserCredential cred = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    return cred.user;
+    try {
+      UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.message);
+    }
   }
 
-  /// LOGOUT
+  /// --- LOGOUT ---
   Future<void> logout() async {
     await _auth.signOut();
   }

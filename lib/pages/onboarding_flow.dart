@@ -20,6 +20,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   // --- State Management ---
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _isLoading = false;
 
   // Form State
   final _fullNameController = TextEditingController();
@@ -45,7 +46,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   @override
   void dispose() {
     _pageController.dispose();
-    _fullNameController.dispose(); // Added dispose for full name
+    _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -58,48 +59,53 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     );
   }
 
+  void _dismissKeyboard() {
+    FocusScope.of(context).unfocus();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackground,
-      // Safe area ensures we don't hide behind notches
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 1. PROGRESS INDICATOR (Visible on pages 1, 2, 3)
-            if (_currentPage > 0 && _currentPage < 4)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(4, (index) => _buildDot(index)),
+    return GestureDetector(
+      onTap: _dismissKeyboard,
+      child: Scaffold(
+        backgroundColor: kBackground,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Progress Indicator
+              if (_currentPage > 0 && _currentPage < 4)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(3, (index) => _buildDot(index)),
+                  ),
+                ),
+
+              // PageView
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onPageChanged: (page) => setState(() => _currentPage = page),
+                  children: [
+                    _buildWelcomeScreen(),
+                    _buildSignUpScreen(),
+                    _buildNicheScreen(),
+                    _buildGoalScreen(),
+                    _buildSuccessScreen(),
+                  ],
                 ),
               ),
-
-            // 2. THE PAGE VIEW (Holds all screens)
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(), // Disable swiping so they use buttons
-                onPageChanged: (page) => setState(() => _currentPage = page),
-                children: [
-                  _buildWelcomeScreen(),
-                  _buildSignUpScreen(),
-                  _buildNicheScreen(),
-                  _buildGoalScreen(),
-                  _buildSuccessScreen(),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // --- WIDGET: Progress Dot ---
+  // --- Progress Dot ---
   Widget _buildDot(int index) {
-    // Adjust index because page 0 (Welcome) doesn't have dots in this logic
     int actualStep = _currentPage - 1;
     bool isActive = index == actualStep;
     return AnimatedContainer(
@@ -108,7 +114,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       height: 8,
       width: isActive ? 24 : 8,
       decoration: BoxDecoration(
-        color: isActive ? kPrimary : kPrimary.withValues(alpha: 0.2),
+        color: isActive ? kPrimary : kPrimary.withValues(alpha: 0.2), // FIXED: withValues
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -122,7 +128,6 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Spacer(),
-          // Logo Placeholder
           Container(
             height: 120,
             width: 120,
@@ -150,7 +155,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 16,
-              color: kPrimary.withValues(alpha: 0.7),
+              color: kPrimary.withValues(alpha: 0.7), // FIXED: withValues
             ),
           ),
           const Spacer(),
@@ -163,10 +168,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           _buildButton(
             label: "I already have an account",
             onTap: () {
-              // Navigate to a separate Login Page here
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Navigate to Login Page")),
-              );
+              Navigator.pushNamed(context, '/login');
             },
             isPrimary: false,
           ),
@@ -176,7 +178,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     );
   }
 
-  // --- SCREEN 2: Sign Up ---
+  // --- SCREEN 2: Sign Up (Data Collection Only) ---
   Widget _buildSignUpScreen() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32.0),
@@ -185,8 +187,11 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
         children: [
           IconButton(
             icon: Icon(Icons.arrow_back, color: kPrimary),
-            onPressed: () => _pageController.previousPage(
-                duration: const Duration(milliseconds: 300), curve: Curves.ease),
+            onPressed: () {
+              _dismissKeyboard();
+              _pageController.previousPage(
+                  duration: const Duration(milliseconds: 300), curve: Curves.ease);
+            },
           ),
           const SizedBox(height: 20),
           Text(
@@ -198,33 +203,18 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             ),
           ),
           const SizedBox(height: 40),
-
-          // UPDATED: Now passing the named argument 'controller' correctly
-          _buildTextField(
-            "Full Name",
-            false,
-            controller: _fullNameController,
-          ),
+          _buildTextField("Full Name", false, controller: _fullNameController),
           const SizedBox(height: 20),
-
-          _buildTextField(
-            "Email Address",
-            false,
-            controller: _emailController,
-          ),
+          _buildTextField("Email Address", false, controller: _emailController),
           const SizedBox(height: 20),
-
-          _buildTextField(
-            "Password",
-            true,
-            controller: _passwordController,
-          ),
+          _buildTextField("Password", true, controller: _passwordController),
           const SizedBox(height: 40),
-
           _buildButton(
-            label: "Create Account",
+            label: "Continue", // Changed from "Create Account"
             isPrimary: true,
-            onTap: () async {
+            onTap: () {
+              _dismissKeyboard();
+              // Validation only - No API call yet
               if (_fullNameController.text.isEmpty ||
                   _emailController.text.isEmpty ||
                   _passwordController.text.isEmpty) {
@@ -233,27 +223,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                 );
                 return;
               }
-
-              try {
-                // Assuming AuthService exists and is imported correctly
-                await AuthService().signUp(
-                  email: _emailController.text.trim(),
-                  password: _passwordController.text.trim(),
-                  fullName: _fullNameController.text.trim(),
-                  niches: selectedNiches,
-                  goal: selectedGoal ?? '',
-                );
-
-                // FIXED: Check if the widget is still on screen before acting on context
-                if (!mounted) return;
-
-                _nextPage(); // go to next onboarding screen
-              } catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Signup failed: $e")),
-                );
-              }
+              // Move to next screen to collect Niche/Goal
+              _nextPage();
             },
           ),
         ],
@@ -274,7 +245,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           const SizedBox(height: 8),
           Text("Select all that apply.",
               style: GoogleFonts.poppins(
-                  fontSize: 14, color: kPrimary.withValues(alpha: 0.6))),
+                  fontSize: 14, color: kPrimary.withValues(alpha: 0.6))), // FIXED
           const SizedBox(height: 30),
           Expanded(
             child: SingleChildScrollView(
@@ -304,7 +275,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                    color: kAccent.withValues(alpha: 0.4),
+                                    color: kAccent.withValues(alpha: 0.4), // FIXED
                                     blurRadius: 8,
                                     offset: const Offset(0, 4))
                               ]
@@ -333,7 +304,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     );
   }
 
-  // --- SCREEN 4: Goal Selection (Gamified) ---
+  // --- SCREEN 4: Goal Selection & Final Signup ---
   Widget _buildGoalScreen() {
     return Padding(
       padding: const EdgeInsets.all(32.0),
@@ -367,7 +338,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                           : Border.all(color: Colors.transparent),
                       boxShadow: [
                         BoxShadow(
-                          color: kPrimary.withValues(alpha: 0.05),
+                          color: kPrimary.withValues(alpha: 0.05), // FIXED
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         )
@@ -379,7 +350,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? Colors.white.withValues(alpha: 0.2)
+                                ? Colors.white.withValues(alpha: 0.2) // FIXED
                                 : Colors.white,
                             shape: BoxShape.circle,
                           ),
@@ -403,8 +374,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                                   style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       color: isSelected
-                                          ? Colors.white.withValues(alpha: 0.9)
-                                          : kPrimary.withValues(alpha: 0.6))),
+                                          ? Colors.white.withValues(alpha: 0.9) // FIXED
+                                          : kPrimary.withValues(alpha: 0.6))), // FIXED
                             ],
                           ),
                         ),
@@ -420,15 +391,44 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           ),
           _buildButton(
             label: "Finish Setup",
-            onTap: selectedGoal != null ? _nextPage : () {},
             isPrimary: selectedGoal != null,
+            isLoading: _isLoading,
+            onTap: selectedGoal != null
+                ? () async {
+                    setState(() => _isLoading = true);
+
+                    try {
+                      // ACTUAL SIGNUP CALL HAPPENS HERE
+                      // We now have all the data required:
+                      // Email, Password, Name, Niches, and Goal
+                      await AuthService().signUp(
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text.trim(),
+                        fullName: _fullNameController.text.trim(),
+                        niches: selectedNiches, // Now available!
+                        goal: selectedGoal!,    // Now available!
+                      );
+                      
+                      if (!mounted) return;
+                      _nextPage(); // Go to success screen
+                      
+                    } catch (e) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Signup failed: $e")),
+                      );
+                    } finally {
+                      if (mounted) setState(() => _isLoading = false);
+                    }
+                  }
+                : () {},
           ),
         ],
       ),
     );
   }
 
-  // --- SCREEN 5: Success/Praise ---
+  // --- SCREEN 5: Success ---
   Widget _buildSuccessScreen() {
     return Padding(
       padding: const EdgeInsets.all(32.0),
@@ -447,7 +447,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             "Your personalized dashboard is ready.\nLet's start growing.",
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-                fontSize: 16, color: kPrimary.withValues(alpha: 0.7)),
+                fontSize: 16, color: kPrimary.withValues(alpha: 0.7)), // FIXED
           ),
           const SizedBox(height: 60),
           _buildButton(
@@ -463,16 +463,17 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     );
   }
 
-  // --- HELPER: Buttons ---
+  // --- HELPER: Button ---
   Widget _buildButton(
       {required String label,
       required VoidCallback onTap,
-      required bool isPrimary}) {
+      required bool isPrimary,
+      bool isLoading = false}) {
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: onTap,
+        onPressed: isLoading ? null : onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary ? kPrimary : Colors.transparent,
           elevation: isPrimary ? 4 : 0,
@@ -483,20 +484,28 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                 : BorderSide(color: kPrimary, width: 2),
           ),
         ),
-        child: Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: isPrimary ? Colors.white : kPrimary,
-          ),
-        ),
+        child: isLoading
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isPrimary ? Colors.white : kPrimary,
+                ),
+              ),
       ),
     );
   }
 
   // --- HELPER: Text Field ---
-  // FIXED: Updated to accept a nullable TextEditingController
   Widget _buildTextField(String hint, bool isPassword,
       {TextEditingController? controller}) {
     return Container(
@@ -505,12 +514,12 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
-        controller: controller, // Now connecting the controller
+        controller: controller,
         obscureText: isPassword,
         decoration: InputDecoration(
           hintText: hint,
           hintStyle:
-              GoogleFonts.poppins(color: kPrimary.withValues(alpha: 0.4)),
+              GoogleFonts.poppins(color: kPrimary.withValues(alpha: 0.4)), // FIXED
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
