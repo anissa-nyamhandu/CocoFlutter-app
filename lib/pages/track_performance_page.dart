@@ -28,7 +28,7 @@ class TrackPerformancePage extends StatelessWidget {
             ),
           ),
 
-          //1st box w text and icon
+          
           Stack(
             children: [
               //green box
@@ -108,7 +108,7 @@ class TrackPerformancePage extends StatelessWidget {
             ],
           ),
 
-          //2nd box w text and icon
+        
           Stack(
             children: [
               //green box

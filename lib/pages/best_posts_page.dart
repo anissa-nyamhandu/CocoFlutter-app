@@ -60,16 +60,16 @@ class BestPostsPage extends StatelessWidget {
               'Day in the Life of a Coder',
               '8.2k views',
               '1.1k likes',
-              'images/tiktok-icon.png', // Corrected from list
-              'images/tiktok-post-1.png', // Using real post image from list
+              'images/tiktok-icon.png', 
+              'images/tiktok-post-1.png', 
             ),
             const SizedBox(height: 12),
             _buildPostListItem(
               'Debugging Secrets Revealed',
               '6.5k views',
               '890 likes',
-              'images/instagram-icon.png', // Corrected from list
-              'images/insta-post-1.png', // Using real post image from list
+              'images/instagram-icon.png', 
+              'images/insta-post-1.png', 
             ),
             const SizedBox(height: 24),
 
@@ -131,7 +131,7 @@ class BestPostsPage extends StatelessWidget {
                 ),
               ),
               Image.asset(
-                'images/instagram-icon.png', // Matching exact list name
+                'images/instagram-icon.png', 
                 height: 24,
                 errorBuilder: (c, o, s) => Icon(Icons.camera_alt, color: kDarkPurple),
               ),
@@ -152,7 +152,7 @@ class BestPostsPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    'images/imagescoding-setup.png', // Matching exact list name
+                    'images/imagescoding-setup.png', 
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Icon(Icons.image_not_supported, color: Colors.grey[600]);
@@ -334,7 +334,7 @@ class BestPostsPage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
-                thumbnailPath, // Using explicit path passed in
+                thumbnailPath, 
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(Icons.image, color: Colors.grey[600]);

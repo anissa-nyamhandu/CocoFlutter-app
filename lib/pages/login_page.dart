@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/services/auth_service.dart'; // Ensure this import exists
+import 'package:my_app/services/auth_service.dart'; 
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,10 +10,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // --- Branding Colors (Matches Onboarding) ---
-  final Color kBackground = const Color(0xFFE0EAD8); // Mint Green
-  final Color kPrimary = const Color(0xFF3D2E3B);    // Deep Purple
-  final Color kCard = const Color(0xFFF2F8F2);       // Pale White/Green
+  final Color kBackground = const Color(0xFFE0EAD8); 
+  final Color kPrimary = const Color(0xFF3D2E3B);    
+  final Color kCard = const Color(0xFFF2F8F2);       
 
   // --- Controllers ---
   final _emailController = TextEditingController();
@@ -46,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (!mounted) return;
-      // Success: Go to Home and clear history so they can't "back" into login
+     
       Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       
     } catch (e) {

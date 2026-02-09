@@ -14,7 +14,7 @@ class AuthService {
     required String goal,
   }) async {
     try {
-      // 1️⃣ Create user in Firebase Auth
+     
       UserCredential cred = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -22,7 +22,6 @@ class AuthService {
 
       User user = cred.user!;
 
-      // 2️⃣ Save extra data in Firestore
       await _db.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'email': email,
@@ -38,7 +37,7 @@ class AuthService {
     }
   }
   
-/// UPDATE NICHES & GOAL
+
 Future<void> updateProfile({
   required String uid,
   required List<String> niches,
@@ -48,16 +47,16 @@ Future<void> updateProfile({
     await _db.collection('users').doc(uid).update({
       'niches': niches,
       'goal': goal,
-      'updatedAt': FieldValue.serverTimestamp(), // optional, tracks when profile was updated
+      'updatedAt': FieldValue.serverTimestamp(), 
     });
   } catch (e) {
-    // Provide a more descriptive error
+  
     throw Exception('Failed to update profile: $e');
   }
 }
 
 
-  /// --- LOGIN ---
+
   Future<UserCredential> signIn({
     required String email,
     required String password,
@@ -74,7 +73,6 @@ Future<void> updateProfile({
     }
   }
 
-  /// --- LOGOUT ---
   Future<void> logout() async {
     await _auth.signOut();
   }

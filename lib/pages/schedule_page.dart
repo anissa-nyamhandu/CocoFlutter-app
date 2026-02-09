@@ -11,13 +11,13 @@ import 'package:path/path.dart' as path;
 
 // --- Branding Colors ---
 final Color kBackground = const Color(0xFF8BB388);
-final Color kPrimary = const Color(0xFF3D2E3B); // Deep Purple
-final Color kAccent = const Color(0xFF8BB388); // Sage Green
-final Color kCard = const Color(0xFFF2F8F2); // Pale White/Green
-final Color kPinkPop = const Color(0xFFFEB0DC); // Pink Accent (Posts)
-final Color kImportant = const Color(0xFFFEB0DC); // Red/Pink - Important
-final Color kSortOfImportant = const Color(0xFFFFD580); // Yellow - Sort of
-// ✅ GREEN for "Not that" important
+final Color kPrimary = const Color(0xFF3D2E3B); 
+final Color kAccent = const Color(0xFF8BB388); 
+final Color kCard = const Color(0xFFF2F8F2); 
+final Color kPinkPop = const Color(0xFFFEB0DC); 
+final Color kImportant = const Color(0xFFFEB0DC); 
+final Color kSortOfImportant = const Color(0xFFFFD580);
+
 final Color kNotThatImportant = const Color(0xFF00822D); 
 
 class SchedulePage extends StatefulWidget {
@@ -189,7 +189,7 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 
-  // ✅ UNIFIED LIST WITH SORTING LOGIC
+ 
   Widget _buildUnifiedList() {
     if (_userId == null) {
       return const Center(child: Text("Please log in."));
@@ -251,7 +251,7 @@ class _SchedulePageState extends State<SchedulePage> {
             // Merge
             final allItems = [...events, ...posts];
 
-            // ✅ SORTING LOGIC: Posts First, Then Time
+            
             allItems.sort((a, b) {
               bool isPostA = a['dataType'] == 'post';
               bool isPostB = b['dataType'] == 'post';
@@ -423,9 +423,7 @@ class PostScheduleCard extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------
-// EDIT POST SHEET (Full Editing Capability)
-// ---------------------------------------------------------
+// EDIT POST SHEET 
 class EditPostSheet extends StatefulWidget {
   final Map<String, dynamic> post;
   final String postId;
@@ -628,7 +626,7 @@ class EventCard extends StatelessWidget {
       case 'sort_of':
         return kSortOfImportant;
       case 'not_that':
-        return kNotThatImportant; // ✅ Green
+        return kNotThatImportant;
       default:
         return kAccent;
     }
@@ -831,7 +829,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
           );
         }
       } else {
-        // For all-day, set time to start of day
+        
         startDateTime = DateTime(date.year, date.month, date.day);
       }
 

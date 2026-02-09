@@ -13,12 +13,11 @@ class OnboardingFlow extends StatefulWidget {
 }
 
 class _OnboardingFlowState extends State<OnboardingFlow> {
-  // --- Branding Colors ---
-  final Color kBackground = const Color(0xFFE0EAD8); // Mint Green
-  final Color kPrimary = const Color(0xFF3D2E3B);    // Deep Purple
-  final Color kAccent = const Color(0xFF8BB388);     // Sage Green
-  final Color kCard = const Color(0xFFF2F8F2);       // Pale White/Green
-  final Color kPinkPop = const Color(0xFFFEB0DC);    // Pink Accent
+  final Color kBackground = const Color(0xFFE0EAD8); 
+  final Color kPrimary = const Color(0xFF3D2E3B);    
+  final Color kAccent = const Color(0xFF8BB388);    
+  final Color kCard = const Color(0xFFF2F8F2);      
+  final Color kPinkPop = const Color(0xFFFEB0DC);   
 
   // --- State Management ---
   final PageController _pageController = PageController();
@@ -95,7 +94,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                     _buildWelcomeScreen(),
                     _buildSignUpScreen(),
                     _buildNicheScreen(),
-                    _buildGoalScreen(), // This has the fix
+                    _buildGoalScreen(), 
                     _buildSuccessScreen(),
                   ],
                 ),
@@ -250,7 +249,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                   'createdAt': FieldValue.serverTimestamp(),
                 });
 
-                // 3️⃣ Move to next screen (Niche selection)
+              
                 if (!mounted) return;
                 _nextPage();
 
@@ -428,18 +427,16 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             label: "Finish Setup",
             isPrimary: selectedGoal != null,
             isLoading: _isLoading,
-            // ---------------------------------------------------------
-            // ✅ EXACT FIX: Update existing user instead of creating new
-            // ---------------------------------------------------------
+          
             onTap: selectedGoal != null
                 ? () async {
                     setState(() => _isLoading = true);
 
                     try {
-                      // 1. Get current user ID (created in previous step)
+                
                       final uid = FirebaseAuth.instance.currentUser!.uid;
 
-                      // 2. Update the existing document
+                      
                       await FirebaseFirestore.instance
                           .collection('users')
                           .doc(uid)
@@ -461,7 +458,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                     }
                   }
                 : () {},
-            // ---------------------------------------------------------
+            
           ),
         ],
       ),

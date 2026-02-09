@@ -91,9 +91,8 @@ class _CreatePostFlowState extends State<CreatePostFlow> {
   }
 }
 
-// ---------------------------------------------------------
 // STEP 1: Select Channels
-// ---------------------------------------------------------
+
 class _SelectChannelStep extends StatefulWidget {
   final ValueChanged<List<String>> onNext;
 
@@ -257,9 +256,8 @@ class _SelectChannelStepState extends State<_SelectChannelStep> {
   }
 }
 
-// ---------------------------------------------------------
 // STEP 2: Create Content
-// ---------------------------------------------------------
+
 class _CreateContentStep extends StatefulWidget {
   final Function(String, String?) onNext;
 
@@ -325,7 +323,7 @@ class _CreateContentStepState extends State<_CreateContentStep> {
       await storageRef.putFile(file);
       final url = await storageRef.getDownloadURL();
       
-      // ✅ FIX 2: Check mounted again before setting state
+      
       if (!mounted) return;
 
       setState(() {
@@ -551,7 +549,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
   final Color kBackground = const Color(0xFFDCEEDB);
   final Color kTextPrimary = const Color(0xFF3D2E3B);
   final Color kTextSecondary = const Color(0xFF6E6E6E);
-  final Color kAccent = const Color(0xFF3D2E3B); // Deep Purple
+  final Color kAccent = const Color(0xFF3D2E3B); 
 
   DateTime _focusedDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();

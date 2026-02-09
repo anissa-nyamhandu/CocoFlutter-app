@@ -40,48 +40,139 @@ class _HomePageState extends State<HomePage> {
     const Color(0xFFDCEEDB),
   ];
 
+  // Design Colors
+  final Color kAccentPink = const Color(0xFFC66C8E);
+  final Color kDarkIcon = const Color(0xFF412334);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: _navColors[_currentIndex],
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Image.asset('images/home-icon.png', width: 25, height: 25, errorBuilder: (c,e,s)=>const Icon(Icons.home)),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('images/schedule-icon.png', width: 25, height: 25, errorBuilder: (c,e,s)=>const Icon(Icons.calendar_today)),
-            label: 'Schedule',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('images/pink-create-icon.png', width: 40, height: 40, errorBuilder: (c,e,s)=>const Icon(Icons.add_circle)),
-            label: 'Create',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('images/learn-icon.png', width: 28, height: 28, errorBuilder: (c,e,s)=>const Icon(Icons.school)),
-            label: 'Learning',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('images/stats-icon.png', width: 25, height: 25, errorBuilder: (c,e,s)=>const Icon(Icons.bar_chart)),
-            label: 'Stats',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        color: _navColors[_currentIndex],
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: _navColors[_currentIndex],
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          elevation: 0,
+          items: [
+            // 0: HOME (Image)
+            _buildNavItem(
+              iconPath: 'images/home-icon.png',
+              iconData: Icons.home,
+              label: 'Home',
+              isActive: _currentIndex == 0,
+            ),
+
+            // 1: SCHEDULE (Image)
+            _buildNavItem(
+              iconPath: 'images/schedule-icon.png',
+              iconData: Icons.calendar_today,
+              label: 'Schedule',
+              isActive: _currentIndex == 1,
+            ),
+
+            // 2: CREATE (Square Button)
+            BottomNavigationBarItem(
+              icon: _buildCreateButton(isActive: false),
+              activeIcon: _buildCreateButton(isActive: true),
+              label: 'Create',
+            ),
+
+            // 3: LEARNING (Standard Icon)
+            _buildNavItem(
+              iconPath: '', 
+              iconData: Icons.school_outlined, 
+              label: 'Learning',
+              isActive: _currentIndex == 3,
+              useIcon: true, 
+            ),
+
+            // 4: STATS (Image)
+            _buildNavItem(
+              iconPath: 'images/stats-icon.png',
+              iconData: Icons.bar_chart,
+              label: 'Stats',
+              isActive: _currentIndex == 4,
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  // Helper to build the tabs
+  BottomNavigationBarItem _buildNavItem({
+    required String iconPath,
+    required IconData iconData,
+    required String label,
+    required bool isActive,
+    bool useIcon = false, 
+  }) {
+    return BottomNavigationBarItem(
+      icon: _buildIconWithLine(iconPath, iconData, false, useIcon),
+      activeIcon: _buildIconWithLine(iconPath, iconData, true, useIcon),
+      label: label,
+    );
+  }
+
+  // The Icon + Underline Builder
+  Widget _buildIconWithLine(String path, IconData iconData, bool visible, bool useIcon) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // RENDER LOGIC:
+        
+        useIcon
+            ? Icon(
+                iconData,
+                size: 30, 
+                color: kDarkIcon,
+              )
+            : Image.asset(
+                path,
+                width: 30,  
+                height: 30, 
+                color: kDarkIcon,
+                errorBuilder: (c, e, s) => Icon(iconData, color: kDarkIcon, size: 30),
+              ),
+        
+        const SizedBox(height: 6), // Spacing
+        
+        // PINK UNDERLINE
+        Container(
+          width: 30, 
+          height: 3,
+          decoration: BoxDecoration(
+            color: visible ? kAccentPink : Colors.transparent,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Create Button Helper
+  Widget _buildCreateButton({required bool isActive}) {
+    final color = isActive ? kAccentPink : kDarkIcon;
+    return Container(
+      width: 42,
+      height: 42,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color, width: 2),
+      ),
+      child: Icon(Icons.add, color: color, size: 28),
     );
   }
 }
 
-// ---------------------------------------------------------
-// DASHBOARD CONTENT
-// ---------------------------------------------------------
+// DASHBOARD CONTENT (Unchanged)
 
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
@@ -98,13 +189,8 @@ class DashboardTab extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- Header ---
                   _buildHeader(),
-
-                  // --- Goal Card ---
                   _buildGoalCard(),
-
-                  // --- Queue Headline ---
                   Padding(
                     padding: const EdgeInsets.only(top: 30, bottom: 15),
                     child: Row(
@@ -119,7 +205,6 @@ class DashboardTab extends StatelessWidget {
                             height: 1.1,
                           ),
                         ),
-                        // Dots indicator (Visual only)
                         Row(
                           children: [
                             Container(width: 20, height: 8, decoration: BoxDecoration(color: const Color(0xFF855872), borderRadius: BorderRadius.circular(4))),
@@ -132,11 +217,7 @@ class DashboardTab extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // --- POSTING QUEUE (Firestore) ---
                   _buildPostingQueue(),
-
-                  // --- Saved Ideas Button ---
                   _buildSavedIdeasButton(),
                 ],
               ),
@@ -149,7 +230,6 @@ class DashboardTab extends StatelessWidget {
 
   Widget _buildPostingQueue() {
     final userId = FirebaseAuth.instance.currentUser?.uid;
-
     if (userId == null) return const SizedBox();
 
     return StreamBuilder<QuerySnapshot>(
@@ -163,13 +243,10 @@ class DashboardTab extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox(height: 160, child: Center(child: CircularProgressIndicator()));
         }
-
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return _buildEmptyState();
         }
-
         final posts = snapshot.data!.docs;
-
         return SizedBox(
           height: 180, 
           child: ListView.builder(
@@ -178,7 +255,6 @@ class DashboardTab extends StatelessWidget {
             itemBuilder: (context, index) {
               final postDoc = posts[index];
               final postData = postDoc.data() as Map<String, dynamic>;
-              // Pass both data and the ID so we can edit/delete
               return _buildPostCard(postData, postDoc.id, context);
             },
           ),
@@ -191,10 +267,8 @@ class DashboardTab extends StatelessWidget {
     final content = post['content'] ?? '';
     final Timestamp? ts = post['scheduledAt'];
     final date = ts?.toDate() ?? DateTime.now();
-    
     final String? imageUrl = post['imageUrl'];
     final bool hasImage = imageUrl != null && imageUrl.isNotEmpty;
-    
     final dayName = DateFormat('EEEE').format(date);
     final dayMonthYear = DateFormat('MMM d yyyy').format(date);
 
@@ -216,15 +290,13 @@ class DashboardTab extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // LEFT SIDE: Text Info
             Expanded(
-              flex: hasImage ? 5 : 1, // Expand to fill if no image
+              flex: hasImage ? 5 : 1,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Date Header
                     Text(
                       '$dayName,\n$dayMonthYear',
                       style: GoogleFonts.poppins(
@@ -235,13 +307,11 @@ class DashboardTab extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    // Post Content
                     Text(
                       content,
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
-                        // Uses .withValues instead of deprecated .withOpacity
                         color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
@@ -251,8 +321,6 @@ class DashboardTab extends StatelessWidget {
                 ),
               ),
             ),
-
-            // RIGHT SIDE: Image (Only render if hasImage is true)
             if (hasImage)
               Expanded(
                 flex: 4,
@@ -269,7 +337,6 @@ class DashboardTab extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Small "Edit" pencil visual cue
                     Positioned(
                       bottom: 16,
                       right: 16,
@@ -327,8 +394,6 @@ class DashboardTab extends StatelessWidget {
       ),
     );
   }
-
-  // --- Extracted Widgets ---
 
   Widget _buildHeader() {
     return SizedBox(
@@ -498,9 +563,6 @@ class DashboardTab extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------
-// EDIT POST SHEET (For Dashboard)
-// ---------------------------------------------------------
 class EditPostDashboardSheet extends StatefulWidget {
   final Map<String, dynamic> post;
   final String postId;
@@ -527,8 +589,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
     super.initState();
     _contentController = TextEditingController(text: widget.post['content']);
     _imageUrl = widget.post['imageUrl'];
-    
-    // Parse existing schedule
     final Timestamp ts = widget.post['scheduledAt'];
     _scheduledDate = ts.toDate();
     _scheduledTime = TimeOfDay.fromDateTime(_scheduledDate);
@@ -538,68 +598,46 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked == null) return;
-
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
-
     setState(() => _isLoading = true);
-
     try {
       final file = File(picked.path);
       final fileName = 'updated_${path.basename(picked.path)}';
       final ref = FirebaseStorage.instance.ref().child('uploads/${user.uid}/$fileName');
-      
       await ref.putFile(file);
       final newUrl = await ref.getDownloadURL();
-
-      setState(() {
-        _imageUrl = newUrl;
-      });
+      setState(() => _imageUrl = newUrl);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _pickDateTime() async {
-    // Note: showDatePicker and showTimePicker return futures.
-    // We must check if the widget is mounted before using setState or context afterwards.
-    
     final date = await showDatePicker(
       context: context,
       initialDate: _scheduledDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: kPrimary),
-          ),
-          child: child!,
-        );
-      },
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(colorScheme: ColorScheme.light(primary: kPrimary)),
+        child: child!,
+      ),
     );
     if (date == null) return;
-    if (!mounted) return; // Guard for async gap
-
+    if (!mounted) return;
     final time = await showTimePicker(
       context: context,
       initialTime: _scheduledTime,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: kPrimary),
-          ),
-          child: child!,
-        );
-      },
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(colorScheme: ColorScheme.light(primary: kPrimary)),
+        child: child!,
+      ),
     );
     if (time == null) return;
-    if (!mounted) return; // Guard for async gap
-
+    if (!mounted) return;
     setState(() {
       _scheduledDate = date;
       _scheduledTime = time;
@@ -608,7 +646,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
 
   Future<void> _saveChanges() async {
     setState(() => _isLoading = true);
-
     final newDateTime = DateTime(
       _scheduledDate.year,
       _scheduledDate.month,
@@ -616,7 +653,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
       _scheduledTime.hour,
       _scheduledTime.minute,
     );
-
     try {
       await FirebaseFirestore.instance.collection('posts').doc(widget.postId).update({
         'content': _contentController.text.trim(),
@@ -624,10 +660,9 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
         'scheduledAt': Timestamp.fromDate(newDateTime),
       });
     } catch (e) {
-      // Handle error optionally
+      // Handle error
     }
-
-    if (!mounted) return; // Guard before using context
+    if (!mounted) return;
     setState(() => _isLoading = false);
     Navigator.pop(context);
   }
@@ -639,24 +674,16 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
         title: Text('Delete Post?', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: kPrimary)),
         content: const Text('This will remove it from your queue permanently.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel', style: TextStyle(color: kPrimary)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel', style: TextStyle(color: kPrimary))),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
         ],
       ),
     );
-
     if (confirm == true) {
       setState(() => _isLoading = true);
       await FirebaseFirestore.instance.collection('posts').doc(widget.postId).delete();
-      
-      if (!mounted) return; // Guard before using context
-      Navigator.pop(context); // Close sheet
+      if (!mounted) return;
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post deleted')));
     }
   }
@@ -677,7 +704,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
           child: ListView(
             controller: controller,
             children: [
-              // Header with Delete Icon
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -690,8 +716,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
                 ],
               ),
               const SizedBox(height: 20),
-              
-              // Text Content
               TextField(
                 controller: _contentController,
                 maxLines: 4,
@@ -703,8 +727,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Image Preview & Change
               GestureDetector(
                 onTap: _pickNewImage,
                 child: Container(
@@ -737,8 +759,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Reschedule
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 4),
                 title: Text('Schedule Time', style: GoogleFonts.poppins(color: kPrimary, fontWeight: FontWeight.w600)),
@@ -753,8 +773,6 @@ class _EditPostDashboardSheetState extends State<EditPostDashboardSheet> {
                 onTap: _pickDateTime,
               ),
               const SizedBox(height: 30),
-
-              // Save Button
               SizedBox(
                 width: double.infinity,
                 height: 56,
