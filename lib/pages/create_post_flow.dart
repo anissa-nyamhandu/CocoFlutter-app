@@ -3,6 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import 'package:path/path.dart' as path;
 
 void main() {
   runApp(const MaterialApp(home: CreatePostFlow()));
@@ -23,6 +27,7 @@ class _CreatePostFlowState extends State<CreatePostFlow> {
 
   // STEP 2 DATA
   String postContent = '';
+  String? postMediaUrl; // Store the uploaded URL here
 
   void _nextPage() {
     _pageController.nextPage(
@@ -48,11 +53,13 @@ class _CreatePostFlowState extends State<CreatePostFlow> {
   }
 
   // Handler for Step 2
-  void _handleContentSaved(String content) {
+  void _handleContentSaved(String content, String? mediaUrl) {
     setState(() {
       postContent = content;
+      postMediaUrl = mediaUrl;
     });
-    developer.log("Step 2 Complete: $postContent", name: 'CreatePostFlow');
+    developer.log("Step 2 Complete: $postContent, URL: $postMediaUrl",
+        name: 'CreatePostFlow');
     _nextPage();
   }
 
@@ -75,6 +82,7 @@ class _CreatePostFlowState extends State<CreatePostFlow> {
               onBack: _previousPage,
               channels: selectedChannels,
               content: postContent,
+              mediaUrl: postMediaUrl, // Pass URL to final step
             ),
           ],
         ),
@@ -253,7 +261,7 @@ class _SelectChannelStepState extends State<_SelectChannelStep> {
 // STEP 2: Create Content
 // ---------------------------------------------------------
 class _CreateContentStep extends StatefulWidget {
-  final ValueChanged<String> onNext;
+  final Function(String, String?) onNext;
 
   const _CreateContentStep({required this.onNext});
 
@@ -264,6 +272,10 @@ class _CreateContentStep extends StatefulWidget {
 class _CreateContentStepState extends State<_CreateContentStep> {
   final TextEditingController _contentController = TextEditingController();
   bool _isNextEnabled = false;
+
+  File? _mediaFile;
+  String? _mediaUrl;
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -279,6 +291,55 @@ class _CreateContentStepState extends State<_CreateContentStep> {
   void dispose() {
     _contentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickMedia() async {
+    final ImagePicker picker = ImagePicker();
+
+    // 1. Await the picker
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (pickedFile == null) return;
+    
+    // ✅ FIX 1: Check mounted before using context
+    if (!mounted) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be logged in to upload.')),
+      );
+      return;
+    }
+
+    setState(() => _isUploading = true);
+
+    final File file = File(pickedFile.path);
+    final fileName = path.basename(file.path);
+    final storageRef =
+        FirebaseStorage.instance.ref().child('uploads/${user.uid}/$fileName');
+
+    try {
+      await storageRef.putFile(file);
+      final url = await storageRef.getDownloadURL();
+      
+      // ✅ FIX 2: Check mounted again before setting state
+      if (!mounted) return;
+
+      setState(() {
+        _mediaFile = file;
+        _mediaUrl = url;
+      });
+    } catch (e) {
+      if (!mounted) return; // Guard
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Upload failed: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
+    }
   }
 
   @override
@@ -333,17 +394,51 @@ class _CreateContentStepState extends State<_CreateContentStep> {
                                 hintStyle: TextStyle(color: Colors.black38),
                               ),
                             ),
+                            if (_mediaFile != null)
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                height: 120,
+                                width: double.infinity,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child:
+                                      Image.file(_mediaFile!, fit: BoxFit.cover),
+                                ),
+                              ),
                             const Divider(),
-                            Row(
-                              children: const [
-                                Icon(Icons.attach_file, size: 20, color: Colors.grey),
-                                SizedBox(width: 4),
-                                Text('Attach', style: TextStyle(color: Colors.grey)),
-                                SizedBox(width: 16),
-                                Icon(Icons.copy, size: 20, color: Colors.grey),
-                                SizedBox(width: 4),
-                                Text('Open draft', style: TextStyle(color: Colors.grey)),
-                              ],
+                            GestureDetector(
+                              onTap: _isUploading ? null : _pickMedia,
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.attach_file,
+                                      size: 20, color: Colors.grey),
+                                  const SizedBox(width: 4),
+                                  const Text('Attach',
+                                      style: TextStyle(color: Colors.grey)),
+                                  const SizedBox(width: 16),
+                                  const Icon(Icons.copy,
+                                      size: 20, color: Colors.grey),
+                                  const SizedBox(width: 4),
+                                  const Text('Open draft',
+                                      style: TextStyle(color: Colors.grey)),
+                                  if (_isUploading)
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 8.0),
+                                      child: SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2),
+                                      ),
+                                    ),
+                                  if (_mediaFile != null && !_isUploading)
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 8.0),
+                                      child: Icon(Icons.check_circle,
+                                          color: Colors.green, size: 20),
+                                    ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -377,7 +472,8 @@ class _CreateContentStepState extends State<_CreateContentStep> {
                 child: ElevatedButton(
                   onPressed: _isNextEnabled
                       ? () {
-                          widget.onNext(_contentController.text.trim());
+                          widget.onNext(
+                              _contentController.text.trim(), _mediaUrl);
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
@@ -396,7 +492,9 @@ class _CreateContentStepState extends State<_CreateContentStep> {
                         'Next',
                         style: TextStyle(
                           fontSize: 18,
-                          color: _isNextEnabled ? const Color(0xFFDCEEDB) : Colors.white70,
+                          color: _isNextEnabled
+                              ? const Color(0xFFDCEEDB)
+                              : Colors.white70,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -430,17 +528,19 @@ class _CreateContentStepState extends State<_CreateContentStep> {
 }
 
 // ---------------------------------------------------------
-// STEP 3: Schedule Post (Styled & Connected)
+// STEP 3: Schedule Post
 // ---------------------------------------------------------
 class _SchedulePostStep extends StatefulWidget {
   final VoidCallback onBack;
   final List<String> channels;
   final String content;
+  final String? mediaUrl;
 
   const _SchedulePostStep({
     required this.onBack,
     required this.channels,
     required this.content,
+    this.mediaUrl,
   });
 
   @override
@@ -448,7 +548,6 @@ class _SchedulePostStep extends StatefulWidget {
 }
 
 class _SchedulePostStepState extends State<_SchedulePostStep> {
-  // Color Palette from branding
   final Color kBackground = const Color(0xFFDCEEDB);
   final Color kTextPrimary = const Color(0xFF3D2E3B);
   final Color kTextSecondary = const Color(0xFF6E6E6E);
@@ -482,13 +581,13 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: kAccent, // Header background color
-              onPrimary: Colors.white, // Header text color
-              onSurface: kTextPrimary, // Body text color
+              primary: kAccent,
+              onPrimary: Colors.white,
+              onSurface: kTextPrimary,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: kAccent, // Button text color
+                foregroundColor: kAccent,
               ),
             ),
           ),
@@ -496,19 +595,20 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
         );
       },
     );
+    // ✅ FIX 3: Check mounted
+    if (!mounted) return;
+
     if (picked != null) {
       setState(() => _selectedTime = picked);
     }
   }
 
-  // ✅ 1. UPDATED: _schedulePost logic
   void _schedulePost() async {
     setState(() => _isSaving = true);
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception("User not logged in");
 
-      // Construct proper DateTime combining date and time
       final scheduledDateTime = DateTime(
         _selectedDate.year,
         _selectedDate.month,
@@ -523,20 +623,20 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
         'channels': widget.channels,
         'status': 'scheduled',
         'scheduledAt': Timestamp.fromDate(scheduledDateTime),
+        'imageUrl': widget.mediaUrl,
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      if (!mounted) return;
+      // ✅ FIX 4: Guard before usage
+      if (!mounted) return; 
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Post scheduled!')),
       );
 
-      // ✅ NAVIGATE HOME (Best Practice vs widget.onBack)
       Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
-      
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) return; // ✅ Guard
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -560,7 +660,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- Header Row (Cancel / Schedule / Confirm) ---
+              // --- Header Row ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -583,7 +683,6 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
                       color: kTextPrimary,
                     ),
                   ),
-                  // Optional Confirm button in header (can call same function)
                   TextButton(
                     onPressed: _isSaving ? null : _schedulePost,
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -646,7 +745,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: kAccent, // Deep Purple background
+                        color: kAccent,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -654,7 +753,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white, // White text
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -678,14 +777,13 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
               const SizedBox(height: 16),
 
               // --- Big Confirm Button ---
-              // ✅ 2. UPDATED: Wired up to _schedulePost with correct text
               SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
                   onPressed: _isSaving ? null : _schedulePost,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kAccent, // Deep Purple
+                    backgroundColor: kAccent,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -719,27 +817,26 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
         DateTime(_focusedDate.year, _focusedDate.month, 1).weekday;
 
     // Weekday Headers
-    List<Widget> weekdayWidgets = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        .map((day) => Expanded(
-              child: Center(
-                child: Text(
-                  day,
-                  style: GoogleFonts.poppins(
-                    color: kTextSecondary,
-                    fontSize: 14,
+    List<Widget> weekdayWidgets =
+        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            .map((day) => Expanded(
+                  child: Center(
+                    child: Text(
+                      day,
+                      style: GoogleFonts.poppins(
+                        color: kTextSecondary,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ))
-        .toList();
+                ))
+            .toList();
 
     // Day Cells
     List<Widget> dayCells = [];
-    // Empty slots
     for (int i = 1; i < firstWeekday; i++) {
       dayCells.add(const SizedBox());
     }
-    // Actual days
     for (int day = 1; day <= daysInMonth; day++) {
       bool isSelected = day == _selectedDate.day &&
           _focusedDate.month == _selectedDate.month &&
@@ -754,9 +851,9 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
             });
           },
           child: Container(
-            margin: const EdgeInsets.all(6), // Spacing between circles
+            margin: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: isSelected ? kAccent : Colors.transparent, // Purple if selected
+              color: isSelected ? kAccent : Colors.transparent,
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -782,7 +879,7 @@ class _SchedulePostStepState extends State<_SchedulePostStep> {
           shrinkWrap: true,
           crossAxisCount: 7,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.0, 
+          childAspectRatio: 1.0,
           children: dayCells,
         ),
       ],
